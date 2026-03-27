@@ -1,27 +1,30 @@
 from rest_framework import viewsets
-from app.models import Pedido, ItemPedido,Produto, Usuario, Loja
-from .serializers import PedidoSerializer, ItemPedidoSerializer, ProdutoSerializer, UsuarioSerializer, LojaSerializer
-from rest_framework.permissions import IsAuthenticated, AllowAny
+from app.models import Pedido, ItemPedido,Produto, Usuario, Loja , Estoque
+from .serializers import PedidoSerializer, ItemPedidoSerializer, ProdutoSerializer, UsuarioSerializer, LojaSerializer,EstoqueSerializer
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
-from app.permissions import IsGerente, IsResponsavel, IsAdministrador
+from app.permissions import IsGerenteOrAdministrador, IsGerenteOrAdministradorOrResponsavel
 
 
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
-    permission_classes = [IsAuthenticated, IsResponsavel | IsGerente | IsAdministrador] 
+    permission_classes = [IsAuthenticated]
 
-
+class EstoqueViewSet(viewsets.ModelViewSet):
+    queryset = Estoque.objects.all()
+    serializer_class = EstoqueSerializer
+    permission_classes = [IsAuthenticated, IsGerenteOrAdministrador]
 
 class ItemPedidoViewSet(viewsets.ModelViewSet):
     queryset = ItemPedido.objects.all()
     serializer_class = ItemPedidoSerializer
-    permission_classes = [IsAuthenticated, IsResponsavel | IsGerente | IsAdministrador] 
+    permission_classes = [IsAuthenticated, IsGerenteOrAdministradorOrResponsavel] 
 
 class ProdutoViewSet(viewsets.ModelViewSet):
     queryset = Produto.objects.all()
     serializer_class = ProdutoSerializer
-    permission_classes = [IsAuthenticated, IsGerente | IsAdministrador] 
+    permission_classes = [IsAuthenticated, IsGerenteOrAdministrador] 
 
 
 
@@ -61,4 +64,4 @@ class UsuarioViewSet(viewsets.ModelViewSet):
 class LojaViewSet(viewsets.ModelViewSet):
     queryset = Loja.objects.all()
     serializer_class = LojaSerializer
-    permission_classes = [IsAuthenticated, IsGerente | IsAdministrador] 
+    permission_classes = [IsAuthenticated, IsGerenteOrAdministrador]
