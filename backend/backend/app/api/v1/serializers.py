@@ -1,5 +1,6 @@
 from rest_framework import serializers
-from models import Pedido, ItemPedido, Produto
+from app.models import Pedido, ItemPedido, Produto, Usuario, Loja
+from django.contrib.auth.models import Group
 
 
 class ItemPedidoSerializer(serializers.ModelSerializer):
@@ -27,3 +28,32 @@ class PedidoSerializer(serializers.ModelSerializer):
             )
 
         return pedido
+
+class ProdutoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Produto
+        fields = ['id', 'nome_produto', 'codigo', 'unidade_medida', 'ativo']
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Usuario
+        fields = ['id', 'nome', 'email', 'senha']
+        extra_kwargs = {'senha': {'write_only': True}}
+
+    def create(self, validated_data):
+        senha = validated_data.pop('senha')
+
+        user = Usuario(**validated_data)
+        user.set_password(senha)  # 🔐 criptografa a senha
+        user.save()
+
+        #pega ou cria o grupo
+        grupo, _ = Group.objects.get_or_create(name='Responsavel')
+        user.groups.add(grupo)
+
+        return user
+
+class LojaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Loja
+        fields = ['id', 'nome_loja', 'endereco']
