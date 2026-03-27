@@ -14,6 +14,7 @@ class Usuario(BaseModel):
     email = models.EmailField(unique=True)
     senha = models.CharField(max_length=255)
     
+    
 
 class Loja(BaseModel):
     nome_loja = models.CharField(max_length=100)
