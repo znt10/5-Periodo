@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 class BaseModel(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -9,16 +10,17 @@ class BaseModel(models.Model):
         abstract = True
 
 
-class Usuario(BaseModel):
-    nome = models.CharField(max_length=100)
-    email = models.EmailField(unique=True)
-    senha = models.CharField(max_length=255)
-    
-    
+
+
 
 class Loja(BaseModel):
     nome_loja = models.CharField(max_length=100)
     endereco = models.CharField(max_length=255)
+    responsavel = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+
+    def __str__(self):
+        return self.nome_loja
+
 
 
 class Produto(BaseModel):
@@ -27,9 +29,13 @@ class Produto(BaseModel):
     unidade_medida = models.CharField(max_length=20)
     ativo = models.BooleanField(default=True)
 
+    def __str__(self):
+        return self.nome_produto
+    
+
 
 class Pedido(BaseModel):
-    usuario = models.ForeignKey(Usuario, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE)
     status = models.CharField(max_length=50)
     data_pedido = models.DateTimeField(auto_now_add=True)
@@ -39,6 +45,8 @@ class Pedido(BaseModel):
         through='ItemPedido',
         related_name='pedidos'
     )
+    def __str__(self):
+        return f"Pedido {self.id} - {self.usuario.nome} - {self.loja.nome_loja}"
 
 
 class ItemPedido(BaseModel):
@@ -46,9 +54,15 @@ class ItemPedido(BaseModel):
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     quantidade = models.IntegerField()
 
+    def __str__(self):
+        return f"{self.quantidade} x {self.produto.nome_produto} (Pedido {self.pedido.id})"
+
 
 class Estoque(BaseModel):
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE)
     quantidade_atual = models.IntegerField()
     quantidade_minima = models.IntegerField()
+
+    def __str__(self):
+        return f"Estoque de {self.produto.nome_produto} na {self.loja.nome_loja}"
