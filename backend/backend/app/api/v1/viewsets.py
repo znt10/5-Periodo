@@ -1,10 +1,18 @@
 from rest_framework import viewsets
-from app.models import Pedido, ItemPedido,Produto, Usuario, Loja , Estoque
+from app.models import Pedido, ItemPedido,Produto, Loja , Estoque
 from .serializers import PedidoSerializer, ItemPedidoSerializer, ProdutoSerializer, UsuarioSerializer, LojaSerializer,EstoqueSerializer
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.exceptions import PermissionDenied
 from app.permissions import IsGerenteOrAdministrador, IsGerenteOrAdministradorOrResponsavel
+from django.contrib.auth.models import User
 
+
+
+
+class LojaViewSet(viewsets.ModelViewSet):
+    queryset = Loja.objects.all()
+    serializer_class = LojaSerializer
+    permission_classes = [IsAuthenticated, IsGerenteOrAdministrador]
 
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
@@ -28,40 +36,37 @@ class ProdutoViewSet(viewsets.ModelViewSet):
 
 
 
+
 class UsuarioViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()  
     serializer_class = UsuarioSerializer
 
     def get_queryset(self):
         user = self.request.user
 
-        # Superusuários e gerentes podem ver todos os usuários, enquanto outros só podem ver a si mesmos
+        # Admin e gerente veem todos
         if user.is_superuser or user.groups.filter(name='Gerente').exists():
-            return Usuario.objects.all()
+            return User.objects.all()
 
-        return Usuario.objects.filter(id=user.id)
-    
+        # Usuário comum só vê ele mesmo
+        return User.objects.filter(id=user.id)
 
-    # Apenas admin e e gerentes podem listar usuários(responsáveis)
     def list(self, request, *args, **kwargs):
         user = request.user
+
         if user.is_superuser or user.groups.filter(name='Gerente').exists():
-            return super(UsuarioViewSet, self).list(request, *args, **kwargs)
-        
+            return super().list(request, *args, **kwargs)
+
         raise PermissionDenied("Não é permitido listar usuários")
 
-    # Apenas admin e e gerentes podem criar usuários(responsáveis)
     def perform_create(self, serializer):
         user = self.request.user
 
-        if  not (user.is_superuser or user.groups.filter(name='Gerente').exists()):
+        if not (user.is_superuser or user.groups.filter(name='Gerente').exists()):
             raise PermissionDenied("Apenas gerentes / administradores podem criar usuários")
 
-        serializer.save()
+        serializer.save()  # 🔐 depende do serializer tratar senha
     
 
 
 
-class LojaViewSet(viewsets.ModelViewSet):
-    queryset = Loja.objects.all()
-    serializer_class = LojaSerializer
-    permission_classes = [IsAuthenticated, IsGerenteOrAdministrador]

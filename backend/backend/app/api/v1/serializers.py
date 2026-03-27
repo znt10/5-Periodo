@@ -1,6 +1,7 @@
 from rest_framework import serializers
-from app.models import Pedido, ItemPedido, Produto, Usuario, Loja
+from app.models import Estoque, Pedido, ItemPedido, Produto, Loja
 from django.contrib.auth.models import Group
+from django.contrib.auth.models import User
 
 
 class ItemPedidoSerializer(serializers.ModelSerializer):
@@ -36,14 +37,14 @@ class ProdutoSerializer(serializers.ModelSerializer):
 
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Usuario
-        fields = ['id', 'nome', 'email', 'senha']
-        extra_kwargs = {'senha': {'write_only': True}}
+        model = User
+        fields = ['id', 'username', 'password']
+        extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        senha = validated_data.pop('senha')
+        senha = validated_data.pop('password')
 
-        user = Usuario(**validated_data)
+        user = User(**validated_data)
         user.set_password(senha)  # 🔐 criptografa a senha
         user.save()
 
@@ -54,6 +55,13 @@ class UsuarioSerializer(serializers.ModelSerializer):
         return user
 
 class LojaSerializer(serializers.ModelSerializer):
+    responsavel_nome = serializers.CharField(source='responsavel.username', read_only=True)
+
     class Meta:
         model = Loja
-        fields = ['id', 'nome_loja', 'endereco']
+        fields = ['id', 'nome_loja', 'endereco', 'responsavel', 'responsavel_nome']
+
+class EstoqueSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Estoque
+        fields = ['id', 'produto', 'loja', 'quantidade_atual', 'quantidade_minima']
