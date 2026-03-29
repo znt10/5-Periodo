@@ -9,3 +9,10 @@ env/
 # Python
 __pycache__/
 *.pyc
+__pyo__
+*.pyo
+*.pyd
+# Django
+*.log
+*.pot
+*.pyc

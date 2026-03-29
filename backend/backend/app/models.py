@@ -45,8 +45,11 @@ class Pedido(BaseModel):
         through='ItemPedido',
         related_name='pedidos'
     )
+    
     def __str__(self):
-        return f"Pedido {self.id} - {self.usuario.nome} - {self.loja.nome_loja}"
+        user_repr = self.user.username if self.user else "Unknown"
+        loja_nome = self.loja.nome_loja if self.loja else "Unknown"
+        return f"Pedido {self.id} - {user_repr} - {loja_nome}"
 
 
 class ItemPedido(BaseModel):
