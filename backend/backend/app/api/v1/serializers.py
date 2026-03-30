@@ -4,6 +4,7 @@ from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
 
 
+
 class ItemPedidoSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemPedido
@@ -15,7 +16,7 @@ class PedidoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Pedido
-        fields = ['id', 'user', 'loja', 'status', 'data_pedido', 'itens']
+        fields = ['id', 'user', 'loja', 'status', 'data_pedido', 'itens', 'descricao']
 
     def create(self, validated_data):
         itens_data = validated_data.pop('itens')
@@ -41,11 +42,35 @@ class UsuarioSerializer(serializers.ModelSerializer):
         fields = ['id', 'username', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
+    # Usar o validador de senho do Django que é bem completo
+    # Mas tipo ja é um sistema mais do dia a dia e meio que "fechado" nao vejo ter senha muito complexa para responsavel
+    # Ficar entrando e Fica "chato de usar"
+
+    """def validate_password(self, value):
+        try:
+            validate_password(value)
+        except DjangoValidationError as e:
+            raise serializers.ValidationError(e.messages)
+        return value"""
+    
+    # deixar um mais simples para o responsavel
+    def validate_password(self, value):
+        if len(value) < 6:
+            raise serializers.ValidationError("A senha deve conter pelo menos 6 caracteres.")
+        return value
+    
+    # Validar se o username já existe para evitar erros de integridade no banco
+    def validate_username(self, value):
+        if User.objects.filter(username=value).exists():
+            raise serializers.ValidationError("Este nome de usuário já está em uso.")
+        return value
+    
+
     def create(self, validated_data):
         senha = validated_data.pop('password')
 
         user = User(**validated_data)
-        user.set_password(senha)  # 🔐 criptografa a senha
+        user.set_password(senha) 
         user.save()
 
         #pega ou cria o grupo
