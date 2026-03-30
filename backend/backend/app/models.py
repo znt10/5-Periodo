@@ -38,6 +38,7 @@ class Pedido(BaseModel):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE)
     status = models.CharField(max_length=50)
+    descricao = models.TextField(blank=True, null=True)
     data_pedido = models.DateTimeField(auto_now_add=True)
 
     produtos = models.ManyToManyField(

@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 
 class CookieJWTAuthentication(BaseAuthentication):
     def authenticate(self, request):
-        # Try cookie first, then Authorization header (Bearer)
+        
         token = request.COOKIES.get('access_token')
 
         if not token:

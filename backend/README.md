@@ -83,7 +83,6 @@ http://127.0.0.1:8000/
 - CRUD de loja
 - CRUD de estoque
 - CRUD de itempedido
-- API REST estruturada
 
 ---
 
