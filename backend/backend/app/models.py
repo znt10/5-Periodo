@@ -10,9 +10,6 @@ class BaseModel(models.Model):
         abstract = True
 
 
-
-
-
 class Loja(BaseModel):
     nome_loja = models.CharField(max_length=100)
     endereco = models.CharField(max_length=255)
@@ -33,9 +30,9 @@ class Produto(BaseModel):
         return self.nome_produto
     
 
-
 class Pedido(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    responsavel = models.ForeignKey(User, on_delete=models.CASCADE)
     loja = models.ForeignKey(Loja, on_delete=models.CASCADE)
     status = models.CharField(max_length=50)
     descricao = models.TextField(blank=True, null=True)
@@ -57,7 +54,8 @@ class ItemPedido(BaseModel):
     pedido = models.ForeignKey(Pedido, on_delete=models.CASCADE, related_name='itens')
     produto = models.ForeignKey(Produto, on_delete=models.CASCADE)
     quantidade = models.IntegerField()
-
+    responsavel = models.ForeignKey(User, on_delete=models.CASCADE)
+    
     def __str__(self):
         return f"{self.quantidade} x {self.produto.nome_produto} (Pedido {self.pedido.id})"
 
