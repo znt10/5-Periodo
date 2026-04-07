@@ -13,14 +13,28 @@ class ItemPedidoSerializer(serializers.ModelSerializer):
 
 class PedidoSerializer(serializers.ModelSerializer):
     itens = ItemPedidoSerializer(many=True)
+    data = serializers.SerializerMethodField()
+    hora = serializers.SerializerMethodField()
 
     class Meta:
         model = Pedido
-        fields = ['id', 'user', 'loja', 'status', 'data_pedido', 'itens', 'descricao']
+        fields = ['id', 'responsavel', 'loja', 'status', 'data', 'hora', 'itens', 'descricao']
+
+    def get_data(self, obj):
+        return obj.data_pedido.strftime('%Y-%m-%d')
+
+    def get_hora(self, obj):
+        return obj.data_pedido.strftime('%H:%M:%S')
+
 
     def create(self, validated_data):
-        itens_data = validated_data.pop('itens')
-        pedido = Pedido.objects.create(**validated_data)
+        itens_data = validated_data.pop('itens', [])
+        user = self.context['request'].user
+
+        pedido = Pedido.objects.create(
+            responsavel=user,
+            **validated_data
+        )
 
         for item in itens_data:
             ItemPedido.objects.create(

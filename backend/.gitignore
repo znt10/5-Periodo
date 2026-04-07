@@ -16,3 +16,4 @@ __pyo__
 *.log
 *.pot
 *.pyc
+.__pycache__
