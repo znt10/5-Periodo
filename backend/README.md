@@ -18,8 +18,10 @@ cd 5-Periodo
 🐍 2. Criar ambiente virtual
 ```bash
 python -m venv venv
+```
 Ativar ambiente virtual:
 
+```bash
 Windows
 
 venv\Scripts\activate
@@ -51,7 +53,6 @@ python manage.py migrate
 ```bash
 python manage.py createsuperuser
 ```
-```bash
 ▶️ 7. Iniciar o servidor
 ```bash
 python manage.py runserver
