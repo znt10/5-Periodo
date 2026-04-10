@@ -14,7 +14,9 @@ O sistema foi pensado para uso interno, onde um gerente cadastra os usuários e 
 ```bash
 git clone https://github.com/znt10/5-Periodo.git
 cd 5-Periodo
+```
 🐍 2. Criar ambiente virtual
+```bash
 python -m venv venv
 Ativar ambiente virtual:
 
@@ -25,24 +27,35 @@ venv\Scripts\activate
 Linux/Mac
 
 source venv/bin/activate
+```
 📦 3. Instalar dependências
+```bash
 pip install -r requirements.txt
 ⚙️ 4. Configurar banco de dados (opcional para teste)
+```
 
 No settings.py, use SQLite:
-
+```bash
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+```
 🔄 5. Rodar migrações
+```bash
 python manage.py migrate
+```
 👤 6. Criar superusuário
+```bash
 python manage.py createsuperuser
+```
+```bash
 ▶️ 7. Iniciar o servidor
+```bash
 python manage.py runserver
+```
 
 A API estará disponível em:
 http://127.0.0.1:8000/
