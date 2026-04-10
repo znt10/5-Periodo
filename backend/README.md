@@ -33,9 +33,9 @@ source venv/bin/activate
 📦 3. Instalar dependências
 ```bash
 pip install -r requirements.txt
-⚙️ 4. Configurar banco de dados (opcional para teste)
-```
 
+```
+⚙️ 4. Configurar banco de dados (opcional para teste)
 No settings.py, use SQLite:
 ```bash
 DATABASES = {
