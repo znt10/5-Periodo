@@ -15,18 +15,12 @@ class IsGerenteOrAdministradorOrResponsavel(BasePermission):
 
         if not user or not user.is_authenticated:
             return False
-
-        # Gerente ou admin → tudo liberado
-        if user.is_superuser or user.groups.filter(name='Gerente').exists():
-            return True
-
-        # Responsável
-        if user.groups.filter(name='Responsavel').exists():
-            # Só pode ver, criar e deletar
-            if request.method in ['GET', 'POST', 'DELETE']:
-                return True
-
-        return False
+        
+        return (
+            user.is_superuser or
+            user.groups.filter(name='Gerente').exists() or
+            user.groups.filter(name='Responsavel').exists()
+        )
 
     def has_object_permission(self, request, view, obj):
         user = request.user

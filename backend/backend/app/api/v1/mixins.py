@@ -1,4 +1,9 @@
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.exceptions import PermissionDenied
+
+from django.contrib.auth.models import User
+
 from app.models import Pedido, ItemPedido, Produto, Loja, Estoque
 from .serializers import (
     PedidoSerializer,
@@ -8,15 +13,11 @@ from .serializers import (
     LojaSerializer,
     EstoqueSerializer
 )
-from rest_framework.permissions import IsAuthenticated
-from rest_framework.exceptions import PermissionDenied
 from app.permissions import IsGerenteOrAdministrador, IsGerenteOrAdministradorOrResponsavel
-from django.contrib.auth.models import User
-
 from .mixins import ResponsavelOuAdminMixin, ApenasAdminPodeCriarMixin
 
 
-# 🔹 Helper de permissão
+# 🔹 Helper
 def is_gerente_ou_admin(user):
     return user.is_superuser or user.groups.filter(name='Gerente').exists()
 
@@ -42,7 +43,7 @@ class ProdutoViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated, IsGerenteOrAdministrador]
 
 
-# 🔹 ITEM PEDIDO
+# 🔹 ITEM PEDIDO 
 class ItemPedidoViewSet(viewsets.ModelViewSet):
     queryset = ItemPedido.objects.all()
     serializer_class = ItemPedidoSerializer
@@ -55,17 +56,46 @@ class ItemPedidoViewSet(viewsets.ModelViewSet):
             return ItemPedido.objects.all()
 
         return ItemPedido.objects.filter(pedido__responsavel=user)
-    
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        pedido = serializer.validated_data.get('pedido')
+
+        if not pedido:
+            raise PermissionDenied("Pedido é obrigatório")
+
+        if not is_gerente_ou_admin(user):
+            if pedido.responsavel != user:
+                raise PermissionDenied("Você não pode adicionar itens a este pedido")
+
+        serializer.save()
+
+    def perform_update(self, serializer):
+        user = self.request.user
+
+        if not is_gerente_ou_admin(user):
+            if serializer.instance.pedido.responsavel != user:
+                raise PermissionDenied("Você só pode editar seus próprios itens")
+
+        serializer.save()
+
+    def perform_destroy(self, instance):
+        user = self.request.user
+
+        if not is_gerente_ou_admin(user):
+            raise PermissionDenied("Apenas gerente/admin pode deletar itens")
+
+        instance.delete()
 
 
+# 🔹 PEDIDO 
 class PedidoViewSet(ResponsavelOuAdminMixin, viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
     permission_classes = [IsAuthenticated, IsGerenteOrAdministradorOrResponsavel]
 
+
 # 🔹 USUÁRIO
-
-
 class UsuarioViewSet(ApenasAdminPodeCriarMixin, viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UsuarioSerializer

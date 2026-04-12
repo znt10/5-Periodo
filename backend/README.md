@@ -17,6 +17,7 @@ cd 5-Periodo
 
 ### 2. Criar ambiente virtual
 
+```
 python -m venv venv
 
 Ativar:
@@ -103,3 +104,4 @@ Após o login, use o token nas requisições:
 Com uso de cookies para melhorar a segurança
 
 ---
+```
