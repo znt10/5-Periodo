@@ -63,7 +63,7 @@ class PedidoViewSet(ResponsavelOuAdminMixin, viewsets.ModelViewSet):
     serializer_class = PedidoSerializer
     permission_classes = [IsAuthenticated, IsGerenteOrAdministradorOrResponsavel]
 
-# 🔹 USUÁRIO
+
 
 
 class UsuarioViewSet(ApenasAdminPodeCriarMixin, viewsets.ModelViewSet):
