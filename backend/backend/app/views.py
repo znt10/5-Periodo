@@ -51,3 +51,11 @@ class LoginView(APIView):
         )
 
         return response
+    
+
+
+class LogoutView(APIView):
+    def post(self, request):
+        response = Response({"message": "Logout realizado"})
+        response.delete_cookie('access_token')  # nome do cookie
+        return response

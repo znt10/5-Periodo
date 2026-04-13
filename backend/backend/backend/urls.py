@@ -8,7 +8,7 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 from app.api.v1.router import urlpatterns as api_urlpatterns
-from app.views import LoginView
+from app.views import LoginView,LogoutView
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -17,4 +17,5 @@ urlpatterns = [
     path('api/schema/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('login/', LoginView.as_view(), name='login'),
+    path('logout/', LogoutView.as_view(), name='logout'),
 ]
