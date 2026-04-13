@@ -13,7 +13,15 @@ class LoginView(APIView):
         email = request.data.get('email')
         password = request.data.get('password')
 
-        user = authenticate(email=email, password=password)
+        user = authenticate(username=email, password=password)
+
+        
+        if user is None and email:
+            try:
+                user_obj = User.objects.get(email=email)
+                user = authenticate(username=user_obj.username, password=password)
+            except User.DoesNotExist:
+                user = None
 
         if user is None:
             return Response({'error': 'Credenciais inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -21,6 +29,8 @@ class LoginView(APIView):
         refresh = RefreshToken.for_user(user)
         access = refresh.access_token
 
+        
+        
         response = Response({'message': 'Login realizado com sucesso'})
 
 
