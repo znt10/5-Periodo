@@ -2,8 +2,7 @@ from rest_framework import serializers
 from app.models import Estoque, Pedido, ItemPedido, Produto, Loja
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
-
-
+from django.db import transaction
 
 class ItemPedidoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -12,9 +11,10 @@ class ItemPedidoSerializer(serializers.ModelSerializer):
 
 
 class PedidoSerializer(serializers.ModelSerializer):
-    itens = ItemPedidoSerializer(many=True)
+    itens = ItemPedidoSerializer(many=True, required=False)
     data = serializers.SerializerMethodField()
     hora = serializers.SerializerMethodField()
+    responsavel = serializers.ReadOnlyField(source='responsavel.username')
 
     class Meta:
         model = Pedido
@@ -26,7 +26,19 @@ class PedidoSerializer(serializers.ModelSerializer):
     def get_hora(self, obj):
         return obj.data_pedido.strftime('%H:%M:%S')
 
+    def validate(self, data):
+        itens = data.get('itens', [])
 
+        if not itens:
+            raise serializers.ValidationError("O pedido precisa ter pelo menos um item.")
+
+        for item in itens:
+            if item['quantidade'] <= 0:
+                raise serializers.ValidationError("Quantidade deve ser maior que zero.")
+
+        return data
+
+    @transaction.atomic
     def create(self, validated_data):
         itens_data = validated_data.pop('itens', [])
         user = self.context['request'].user
@@ -53,41 +65,30 @@ class ProdutoSerializer(serializers.ModelSerializer):
 class UsuarioSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'username', 'password']
+        fields = ['id', 'email', 'password']
         extra_kwargs = {'password': {'write_only': True}}
 
-    # Usar o validador de senho do Django que é bem completo
-    # Mas tipo ja é um sistema mais do dia a dia e meio que "fechado" nao vejo ter senha muito complexa para responsavel
-    # Ficar entrando e Fica "chato de usar"
-
-    """def validate_password(self, value):
-        try:
-            validate_password(value)
-        except DjangoValidationError as e:
-            raise serializers.ValidationError(e.messages)
-        return value"""
-    
-    # deixar um mais simples para o responsavel
     def validate_password(self, value):
         if len(value) < 6:
             raise serializers.ValidationError("A senha deve conter pelo menos 6 caracteres.")
         return value
-    
-    # Validar se o username já existe para evitar erros de integridade no banco
-    def validate_username(self, value):
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("Este nome de usuário já está em uso.")
+
+    def validate_email(self, value):
+        if User.objects.filter(email=value).exists():
+            raise serializers.ValidationError("Este email já está em uso.")
         return value
-    
 
     def create(self, validated_data):
         senha = validated_data.pop('password')
 
-        user = User(**validated_data)
-        user.set_password(senha) 
+        # usa email como username automaticamente
+        user = User(
+            username=validated_data['email'],
+            email=validated_data['email']
+        )
+        user.set_password(senha)
         user.save()
 
-        #pega ou cria o grupo
         grupo, _ = Group.objects.get_or_create(name='Responsavel')
         user.groups.add(grupo)
 

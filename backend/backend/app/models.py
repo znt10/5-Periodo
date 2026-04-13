@@ -11,7 +11,16 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
+    def soft_delete(self):
+        self.is_deleted = True
+        self.save()
 
+    def restore(self):
+        self.is_deleted = False
+        self.save()
+
+    def delete(self, *args, **kwargs):
+        self.soft_delete()
 
 
 

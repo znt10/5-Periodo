@@ -66,32 +66,7 @@ class PedidoViewSet(ResponsavelOuAdminMixin, viewsets.ModelViewSet):
 
 
 
-class UsuarioViewSet(ApenasAdminPodeCriarMixin, viewsets.ModelViewSet):
+class UsuarioViewSet(ResponsavelOuAdminMixin, viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = UsuarioSerializer
-    permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-
-        if is_gerente_ou_admin(user):
-            return User.objects.all()
-
-        return User.objects.filter(id=user.id)
-
-    def perform_update(self, serializer):
-        user = self.request.user
-
-        if not is_gerente_ou_admin(user):
-            if serializer.instance != user:
-                raise PermissionDenied("Você não pode editar outro usuário")
-
-        serializer.save()
-
-    def perform_destroy(self, instance):
-        user = self.request.user
-
-        if not is_gerente_ou_admin(user):
-            raise PermissionDenied("Você não pode deletar usuários")
-
-        instance.delete()
+    permission_classes = [IsAuthenticated,IsGerenteOrAdministrador]
