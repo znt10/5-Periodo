@@ -4,6 +4,10 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 class LoginView(APIView):
     def post(self, request):
         email = request.data.get('email')
@@ -19,7 +23,7 @@ class LoginView(APIView):
 
         response = Response({'message': 'Login realizado com sucesso'})
 
-    
+
         response.set_cookie(
             key='access_token',
             value=str(access),
