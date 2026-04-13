@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
 
 export default function RegisterPage() {
   const [cargo, setCargo] = useState('gerente');
@@ -20,7 +21,6 @@ export default function RegisterPage() {
   return (
     <div className="flex min-h-screen w-full bg-white font-sans text-slate-900">
       
-      {/* Lado Esquerdo - Branding */}
       <div className="hidden w-1/2 flex-col items-center justify-center bg-[#020617] lg:flex">
         <div className="flex items-center gap-4 text-white">
           <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#1d4ed8]">
@@ -30,13 +30,11 @@ export default function RegisterPage() {
         </div>
       </div>
 
-      {/* Lado Direito - Form */}
       <div className="flex w-full items-center justify-center p-8 lg:w-1/2">
         <div className="w-full max-w-md">
           
-          {/* Header */}
           <header className="flex flex-col items-center text-center mb-8">
-            <div className="mb-4 flex items-center gap-2">
+            <div className="mb-4 flex items-center gap-2 lg:hidden">
                <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#1d4ed8]">
                 <LogoIcon size="24" />
               </div>
@@ -46,7 +44,6 @@ export default function RegisterPage() {
             <p className="mt-2 text-sm text-slate-600">Preencha seus dados para criar uma nova conta</p>
           </header>
 
-          {/* Seletor de Cargo Corrigido */}
           <div className="flex w-full overflow-hidden rounded-lg border border-slate-300 mb-8">
             <button 
               type="button" 
@@ -81,13 +78,21 @@ export default function RegisterPage() {
               ))}
             </div>
 
-            {/* Botão de Ação Separado */}
             <div className="mt-12">
-              <button type="submit" className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#4466f2] py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700 shadow-md active:scale-[0.98]">
-                Continuar
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-              </button>
+              <Link href="/">
+                <button type="button" className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#4466f2] py-3.5 text-sm font-semibold text-white transition hover:bg-blue-700 shadow-md active:scale-[0.98]">
+                  Continuar
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+              </Link>
             </div>
+
+            <p className="mt-6 text-center text-sm text-slate-600">
+              Já possui uma conta?{' '}
+              <Link href="/" className="font-bold text-blue-600 hover:underline">
+                Faça login
+              </Link>
+            </p>
           </form>
 
         </div>
@@ -95,4 +100,3 @@ export default function RegisterPage() {
     </div>
   );
 };
-
