@@ -28,6 +28,7 @@ class LoginView(APIView):
 
         response = Response({'message': 'Login realizado com sucesso'})
 
+
         response.set_cookie(
             key='access_token',
             value=str(access),
