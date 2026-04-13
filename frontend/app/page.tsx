@@ -2,8 +2,9 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { login } from '@/services/auth';
 
-const LoginPage = () => {
+export default function LoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,30 +25,18 @@ const LoginPage = () => {
   );
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError(null);
-    setLoading(true);
-    try {
-      const res = await fetch('http://127.0.0.1:8000/login/', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password }),
-      });
+  e.preventDefault();
+  setError(null);
+  setLoading(true);
 
-      if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        setError(data?.detail || 'Credenciais inválidas');
-        setLoading(false);
-        return;
-      }
-
-     
-      router.push('/registra');
-    } catch (err) {
-      setError('Erro de rede. Tente novamente.');
-    } finally {
-      setLoading(false);
-    }
+  try {
+    await login(email, password);
+    router.push('/registra');
+  } catch (err: any) {
+    setError(err.message);
+  } finally {
+    setLoading(false);
+  }
   };
 
   return (
@@ -129,4 +118,4 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+
