@@ -42,7 +42,7 @@ const LoginPage = () => {
       }
 
      
-      router.push('/');
+      router.push('/registra');
     } catch (err) {
       setError('Erro de rede. Tente novamente.');
     } finally {
