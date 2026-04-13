@@ -18,7 +18,7 @@ __pyo__
 *.pot
 *.pyc
 .__pycache__
-
+.pyc 
 settings.py
 local_settings.py
 db.sqlite3

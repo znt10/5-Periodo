@@ -2,7 +2,8 @@
 
 import React from 'react';
 import Link from 'next/link';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { logout } from '@/services/auth';
 
 // ESTE OBJETO ESTAVA FALTANDO OU FORA DO LUGAR:
 const Icons = {
@@ -26,8 +27,19 @@ const Icons = {
   )
 };
 
-const Sidebar = () => {
-  const pathname = usePathname();
+export default function Sidebar() {
+  const pathname = usePathname(); 
+  const router = useRouter();
+  
+  const handleLogout = async () => {
+    try {
+      await logout(); // chama Django
+    } catch (err) {
+      console.error('Erro ao deslogar');
+    } finally {
+      router.push('/');
+    }
+  };
 
   return (
     <aside className="fixed left-0 top-0 z-40 h-screen w-64 bg-[#080b11] text-white shadow-xl">
@@ -84,11 +96,13 @@ const Sidebar = () => {
           <li className="flex items-center gap-3 cursor-pointer text-[14px] text-slate-300 hover:text-white transition-colors">
             <Icons.Settings /> Configurações
           </li>
-          <li>
-            {/* Link para a tela de Registro/Sair */}
-            <Link href="/registra" className="flex items-center gap-3 cursor-pointer text-[14px] text-slate-400 hover:text-white transition-colors">
+           <li>
+            <button
+              onClick={handleLogout}
+              className="flex items-center gap-3 cursor-pointer text-[14px] text-slate-400 hover:text-white transition-colors"
+            >
               <Icons.LogOut /> Sair
-            </Link>
+            </button>
           </li>
         </ul>
         <button className="flex w-full items-center justify-center gap-3 rounded-lg border border-slate-800 bg-transparent py-2.5 text-[12px] font-medium text-slate-400 transition hover:bg-slate-800/40 uppercase tracking-tighter">
@@ -98,5 +112,3 @@ const Sidebar = () => {
     </aside>
   );
 };
-
-export default Sidebar;
