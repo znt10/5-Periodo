@@ -4,12 +4,16 @@ from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
 class LoginView(APIView):
     def post(self, request):
-        username = request.data.get('username')
+        email = request.data.get('email')
         password = request.data.get('password')
 
-        user = authenticate(username=username, password=password)
+        user = authenticate(email=email, password=password)
 
         if user is None:
             return Response({'error': 'Credenciais inválidas'}, status=status.HTTP_401_UNAUTHORIZED)
@@ -19,7 +23,7 @@ class LoginView(APIView):
 
         response = Response({'message': 'Login realizado com sucesso'})
 
-    
+
         response.set_cookie(
             key='access_token',
             value=str(access),

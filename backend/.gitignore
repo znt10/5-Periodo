@@ -2,6 +2,7 @@
 venv/
 env/
 .venv/
+.db.sqlite3
 
 # Arquivos de ambiente (variáveis sensíveis)
 .env
@@ -16,3 +17,4 @@ __pyo__
 *.log
 *.pot
 *.pyc
+.__pycache__
