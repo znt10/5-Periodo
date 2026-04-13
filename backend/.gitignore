@@ -2,6 +2,7 @@
 venv/
 env/
 .venv/
+.db.sqlite3
 
 # Arquivos de ambiente (variáveis sensíveis)
 .env

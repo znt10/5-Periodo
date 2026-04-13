@@ -9,6 +9,9 @@ class BaseModel(models.Model):
     class Meta:
         abstract = True
 
+    def soft_delete(self):
+        self.is_deleted = True
+        self.save()
 
 class Loja(BaseModel):
     nome_loja = models.CharField(max_length=100)
