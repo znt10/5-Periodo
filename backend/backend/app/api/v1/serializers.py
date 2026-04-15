@@ -66,9 +66,14 @@ class ProdutoSerializer(serializers.ModelSerializer):
         fields = ['id', 'nome_produto', 'codigo', 'unidade_medida', 'ativo']
 
 class UsuarioSerializer(serializers.ModelSerializer):
+    tipo_usuario = serializers.ChoiceField(
+        choices=['responsavel', 'gerente'],
+        write_only=True
+    )
+
     class Meta:
         model = User
-        fields = ['id', 'email', 'password']
+        fields = ['id','first_name' ,'email', 'password','tipo_usuario']
         extra_kwargs = {'password': {'write_only': True}}
 
     # Usar o validador de senho do Django que é bem completo
@@ -89,21 +94,29 @@ class UsuarioSerializer(serializers.ModelSerializer):
         return value
     
     # Validar se o username já existe para evitar erros de integridade no banco
-    def validate_username(self, value):
-        if User.objects.filter(username=value).exists():
-            raise serializers.ValidationError("Este nome de usuário já está em uso.")
+    def validate_email(self, value):
+        email = value.lower()
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError("Este email já está em uso.")
         return value
-    
+
 
     def create(self, validated_data):
         senha = validated_data.pop('password')
+        email = validated_data.get('email')
+        tipo_usuario = validated_data.pop('tipo_usuario')
 
         user = User(**validated_data)
         user.set_password(senha) 
+        user.username = email
         user.save()
 
         #pega ou cria o grupo
-        grupo, _ = Group.objects.get_or_create(name='Responsavel')
+        if tipo_usuario == 'gerente':
+            grupo, _ = Group.objects.get_or_create(name='Gerente')
+        else:
+            grupo, _ = Group.objects.get_or_create(name='Responsavel')
+
         user.groups.add(grupo)
 
         return user

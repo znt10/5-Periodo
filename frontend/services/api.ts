@@ -1,4 +1,5 @@
-const API_URL = 'http://127.0.0.1:8000';
+const API_URL = 'http://127.0.0.1:1503';
+
 
 export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   const res = await fetch(`${API_URL}${endpoint}`, {
@@ -17,4 +18,9 @@ export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
   }
 
   return data;
+};
+
+export const apiV1 = async (endpoint: string, options: RequestInit = {}) => {
+  
+  return apiFetch(`/api/v1${endpoint}`, options);
 };
