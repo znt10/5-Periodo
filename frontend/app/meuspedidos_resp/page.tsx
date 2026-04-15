@@ -46,8 +46,8 @@ export default function MeusPedidosPage() {
 
         <div className="flex justify-between items-start mb-8 mt-12 lg:mt-0">
           <header>
-            <h1 className="text-3xl font-bold text-gray-100">Painel de Controle</h1>
-            <p className="text-gray-500 text-sm mt-1">Bem-vindo de volta, aqui está o resumo de hoje.</p>
+            <h1 className="text-3xl font-bold text-gray-100">Meus Pedidos</h1>
+            <p className="text-gray-500 text-sm mt-1">Bem-vindo a tela dos seus pedidos.</p>
           </header>
 
           <div className="relative" ref={dropdownRef}>
