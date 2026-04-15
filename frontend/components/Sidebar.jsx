@@ -50,11 +50,12 @@ export default function Sidebar() {
         </div>
         <span className="text-2xl font-bold tracking-tight">UniStock</span>
       </Link>
-
+      <Link href="/registrar">
       <div className="flex items-center gap-3 px-6 py-6 text-slate-300">
         <Icons.UserCircle />
         <span className="text-[17px] font-semibold text-white">Responsável</span>
       </div>
+      </Link>
 
       <nav className="flex-1 px-4">
         <p className="mb-3 px-2 text-[11px] font-bold tracking-[0.1em] text-slate-500 uppercase">Menu</p>

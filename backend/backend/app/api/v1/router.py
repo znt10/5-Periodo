@@ -7,6 +7,6 @@ router.register(r'itens-pedido', ItemPedidoViewSet)
 router.register(r'produtos', ProdutoViewSet)
 router.register(r'lojas', LojaViewSet)
 router.register(r'estoque', EstoqueViewSet)
-router.register(r'usuarios', UsuarioViewSet)
+router.register(r'user', UsuarioViewSet)
 
 urlpatterns = router.urls
