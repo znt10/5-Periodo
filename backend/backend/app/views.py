@@ -59,5 +59,6 @@ class LogoutView(APIView):
     permission_classes = [IsAuthenticated]
     def post(self, request):
         response = Response({"message": "Logout realizado"})
-        response.delete_cookie('access_token')  # nome do cookie
+        response.delete_cookie('access_token')
+        response.delete_cookie("refresh_token") 
         return response
