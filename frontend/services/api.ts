@@ -2,13 +2,16 @@ const API_URL = 'http://localhost:1503';
 
 
 export const apiFetch = async (endpoint: string, options: RequestInit = {}) => {
+  const { headers: optionHeaders, ...restOptions } = options; // separa os headers do resto
+
   const res = await fetch(`${API_URL}${endpoint}`, {
     credentials: 'include',
+    ...restOptions, // spread sem o headers
     headers: {
       'Content-Type': 'application/json',
-      ...options.headers,
+      ...optionHeaders, // headers do options
+      //'X-CSRFToken': getCsrfToken(), // sempre por último pra garantir
     },
-    ...options,
   });
 
   const data = await res.json().catch(() => ({}));
