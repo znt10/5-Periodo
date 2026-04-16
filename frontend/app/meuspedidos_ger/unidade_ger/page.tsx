@@ -6,13 +6,13 @@ import Link from 'next/link';
 
 const Icons = {
   CheckCircle: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#22c55e" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6 9 17l-5-5" /></svg>
   ),
   ChevronLeft: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6" /></svg>
   ),
   ChevronRight: () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6-6-6" /></svg>
   )
 };
 
@@ -51,12 +51,12 @@ export default function PedidosUnidade() {
             </p>
           </header>
           <Link href="/gerencia" className="bg-[#161b22] border border-gray-800 px-5 py-2.5 rounded-xl text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-[#1f262e] transition-all flex items-center gap-2">
-            <Icons.ChevronLeft /> Voltar 
+            <Icons.ChevronLeft /> Voltar
           </Link>
         </div>
 
         <div className="flex flex-col-reverse lg:flex-row gap-8 items-start">
-          
+
           {/* Tabela Principal */}
           <div className="w-full lg:flex-1 bg-[#161b22] rounded-[32px] overflow-hidden border border-gray-800 shadow-2xl">
             <div className="overflow-x-auto">
@@ -82,7 +82,7 @@ export default function PedidosUnidade() {
                       <td className="px-6 py-5 text-sm text-gray-500 font-medium">{item.data}</td>
                       <td className="px-6 py-5 text-base font-black text-white tracking-tight">{item.produto}</td>
                       <td className="px-6 py-5 text-center font-black text-blue-500 text-base">{item.qtd}</td>
-                      
+
                       {/* Descrição Corrigida para Leitura */}
                       <td className="px-6 py-5 min-w-[250px]">
                         {item.desc && item.desc !== '-' ? (
@@ -109,31 +109,30 @@ export default function PedidosUnidade() {
 
             {/* Paginação Padronizada */}
             <div className="p-8 border-t border-gray-800/50 flex justify-center items-center gap-3 bg-[#11161d]">
-              <button 
+              <button
                 onClick={() => setPagina(p => Math.max(1, p - 1))}
                 className="p-2 text-gray-600 hover:text-white transition-colors disabled:opacity-20"
                 disabled={pagina === 1}
               >
                 <Icons.ChevronLeft />
               </button>
-              
+
               <div className="flex gap-2">
                 {[...Array(totalPaginas)].map((_, i) => (
-                  <button 
+                  <button
                     key={i}
-                    onClick={() => setPagina(i + 1)} 
-                    className={`w-10 h-10 rounded-full font-black text-sm transition-all ${
-                      pagina === i + 1 
-                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40' 
+                    onClick={() => setPagina(i + 1)}
+                    className={`w-10 h-10 rounded-full font-black text-sm transition-all ${pagina === i + 1
+                        ? 'bg-blue-600 text-white shadow-lg shadow-blue-900/40'
                         : 'text-gray-600 hover:bg-gray-800 hover:text-gray-300'
-                    }`}
+                      }`}
                   >
                     {i + 1}
                   </button>
                 ))}
               </div>
-              
-              <button 
+
+              <button
                 onClick={() => setPagina(p => Math.min(totalPaginas, p + 1))}
                 className="p-2 text-gray-600 hover:text-white transition-colors disabled:opacity-20"
                 disabled={pagina === totalPaginas}

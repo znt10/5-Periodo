@@ -28,11 +28,10 @@ export default function GerenciaPedidos() {
       <Sidebar />
 
       <main className="flex-1 lg:ml-64 p-6 md:p-10 transition-all">
-        {/* Header Superior */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
           <div>
             <span className="text-blue-500 text-[10px] font-black uppercase tracking-[2px] mb-1 block">Administração</span>
-            <h1 className="text-3xl font-bold tracking-tight text-white">Meus Pedidos</h1>
+            <h1 className="text-3xl font-bold tracking-tight text-white">Minhas Lojas</h1>
             <p className="text-gray-500 text-sm mt-1">Visão geral das unidades e solicitações pendentes.</p>
           </div>
           <button className="bg-[#161b22] border border-gray-800 px-5 py-2.5 rounded-xl text-sm font-bold text-gray-300 hover:bg-[#1f262e] hover:border-gray-700 transition-all">
