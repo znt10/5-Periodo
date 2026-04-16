@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.permissions import IsAuthenticated
 
 from django.contrib.auth import get_user_model
 
@@ -55,6 +56,7 @@ class LoginView(APIView):
 
 
 class LogoutView(APIView):
+    permission_classes = [IsAuthenticated]
     def post(self, request):
         response = Response({"message": "Logout realizado"})
         response.delete_cookie('access_token')  # nome do cookie
