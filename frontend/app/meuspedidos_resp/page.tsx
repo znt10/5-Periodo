@@ -4,7 +4,6 @@ import React, { useState, useRef, useEffect } from 'react';
 import Sidebar from '@/components/Sidebar';
 import Link from 'next/link'; // Importação necessária para a navegação
 
-// --- Ícone de Sino (SVG Puro para evitar erros de instalação) ---
 const BellIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
     <path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9" />
@@ -46,8 +45,8 @@ export default function MeusPedidosPage() {
 
         <div className="flex justify-between items-start mb-8 mt-12 lg:mt-0">
           <header>
-            <h1 className="text-3xl font-bold text-gray-100">Painel de Controle</h1>
-            <p className="text-gray-500 text-sm mt-1">Bem-vindo de volta, aqui está o resumo de hoje.</p>
+            <h1 className="text-3xl font-bold text-gray-100">Meus Pedidos</h1>
+            <p className="text-gray-500 text-sm mt-1">Bem-vindo a tela dos seus pedidos.</p>
           </header>
 
           <div className="relative" ref={dropdownRef}>
