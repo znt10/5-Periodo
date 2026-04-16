@@ -48,7 +48,7 @@ class Pedido(BaseModel):
     )
     
     def __str__(self):
-        user_repr = self.user.username if self.user else "Unknown"
+        user_repr = self.responsavel.username if self.responsavel else "Unknown"
         loja_nome = self.loja.nome_loja if self.loja else "Unknown"
         return f"Pedido {self.id} - {user_repr} - {loja_nome}"
 
