@@ -20,8 +20,8 @@ const Icons = {
   ChevronLeft: () => (
     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
   ),
-  ChevronRight: () => (
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m9 18 6-6 6-6"/></svg>
+  Pen: () => (
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="m18 2 4 4-14 14H4v-4Z"/></svg>
   )
 };
 
@@ -53,10 +53,8 @@ export default function PrivacidadeSeguranca() {
     <div className="flex min-h-screen bg-[#0d1117] text-gray-100 font-sans antialiased">
       <Sidebar />
 
-      {/* Conteúdo Principal com espaçamento responsivo para a Sidebar */}
       <main className="flex-1 lg:ml-64 p-8 md:p-12 transition-all duration-300">
         
-        {/* Cabeçalho Profissional */}
         <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-14">
           <div>
             <span className="text-blue-500 text-[11px] font-black uppercase tracking-[4px] mb-3 block">
@@ -74,7 +72,6 @@ export default function PrivacidadeSeguranca() {
           </Link>
         </div>
 
-        {/* Busca Refinada (Estilo UniStock) */}
         <div className="relative max-w-2xl mb-16 group">
           <input 
             type="text" 
@@ -86,7 +83,6 @@ export default function PrivacidadeSeguranca() {
           </div>
         </div>
 
-        {/* Lista de Opções Estilizada */}
         <div className="max-w-4xl space-y-4">
           <div className="flex items-center gap-4 mb-6">
             <span className="text-[10px] font-black text-gray-600 uppercase tracking-[3px]">Configurações Críticas</span>
@@ -99,7 +95,6 @@ export default function PrivacidadeSeguranca() {
               className="w-full bg-[#161b22] border border-gray-800 rounded-[24px] p-6 flex items-center justify-between hover:border-blue-500/30 hover:bg-[#1c222a] transition-all group shadow-xl active:scale-[0.99] outline-none focus:ring-2 focus:ring-blue-500/20"
             >
               <div className="flex items-center gap-4 md:gap-7">
-                {/* Container do Ícone */}
                 <div className="bg-[#0d1117] p-4 rounded-[20px] text-blue-500 border border-gray-800 group-hover:border-blue-500/20 group-hover:scale-105 transition-all shadow-inner shrink-0">
                   {item.icon}
                 </div>
@@ -114,15 +109,14 @@ export default function PrivacidadeSeguranca() {
                 </div>
               </div>
 
-              {/* Seta Indicadora */}
-              <div className="bg-[#0d1117] p-2 rounded-full text-gray-700 border border-gray-800 group-hover:text-blue-500 group-hover:border-blue-500/30 group-hover:translate-x-1 transition-all shrink-0">
-                <Icons.ChevronRight />
+              {/* Ajustado para utilizar o ícone de caneta igual ao design de referência */}
+              <div className="w-10 h-10 flex items-center justify-center bg-[#0d1117] rounded-full text-gray-600 border border-gray-800 group-hover:text-blue-500 group-hover:border-blue-500/30 transition-all shrink-0">
+                <Icons.Pen />
               </div>
             </button>
           ))}
         </div>
 
-        {/* Rodapé de Informação */}
         <p className="mt-12 text-gray-600 text-[11px] font-medium max-w-2xl leading-relaxed">
           Suas informações de segurança são protegidas por criptografia de ponta a ponta. 
           A UniStock não compartilha dados sensíveis com terceiros sem sua autorização explícita.
