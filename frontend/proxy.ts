@@ -2,7 +2,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 
 export default function proxy(request: NextRequest) {
-  const token = request.cookies.get('csrftoken')?.value;
+  const token = request.cookies.get('access_token')?.value;
   const pathname = request.nextUrl.pathname;
 
   const publicRoutes = ['/'];

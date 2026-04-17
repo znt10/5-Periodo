@@ -3,11 +3,14 @@ from rest_framework.views import APIView
 from rest_framework import status
 from django.contrib.auth import authenticate
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework.permissions import IsAuthenticated
-
-from django.contrib.auth import get_user_model
-
+from django.conf import settings
+from rest_framework.permissions import IsAuthenticated,AllowAny
+from drf_spectacular.utils import extend_schema
+from django.contrib.auth import get_user_model 
+from app.api.v1 import serializers
+from django.utils import timezone
 User = get_user_model()
+
 
 class LoginView(APIView):
     def post(self, request):
@@ -60,21 +63,46 @@ class LogoutView(APIView):
     def post(self, request):
         response = Response({"message": "Logout realizado"})
         response.delete_cookie('access_token')  # nome do cookie
+        response.delete_cookie('refresh_token')  # nome do cookie
         return response
 
 
-class registraGerente(APIView):
+
+
+
+
+class PasswordResetKeyWebToken(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request):
-        email = request.data.get('email')
-        password = request.data.get('password')
+        if "email" not in request.data:
+            return Response({"error": "Email é obrigatório"}, status=400)
 
-        if not email or not password:
-            return Response({'error': 'Email e senha são obrigatórios'}, status=status.HTTP_400_BAD_REQUEST)
+        serializer = serializers.PasswordResetKeyWebTokenSerializer(
+            data={"email": request.data["email"]}
+        )
 
-        if User.objects.filter(email=email).exists():
-            return Response({'error': 'Email já registrado'}, status=status.HTTP_400_BAD_REQUEST)
+        if serializer.is_valid(raise_exception=True):
 
-        user = User.objects.create_user(username=email, email=email, password=password)
-        user.save()
+            link = f"http://127.0.0.1:1503/nova-senha?id={serializer.validated_data['user']}&token={serializer.validated_data['token']}"
 
-        return Response({'message': 'Gerente registrado com sucesso'}, status=status.HTTP_201_CREATED)
+            # DEBUG (igual Next)
+            print("\n🔐 LINK DE RESET:")
+            print(link)
+            print("")
+
+            return Response({"success": link}, status=200)
+
+        return Response(serializer.errors, status=400)
+
+
+class PasswordResetWebToken(APIView):
+    permission_classes = [AllowAny]
+
+    def post(self, request):
+        serializer = serializers.PasswordResetWebTokenSerializer(data=request.data)
+
+        if serializer.is_valid(raise_exception=True):
+            return Response(serializer.validated_data, status=200)
+
+        return Response(serializer.errors, status=400)

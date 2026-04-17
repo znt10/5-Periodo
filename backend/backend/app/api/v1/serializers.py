@@ -2,8 +2,18 @@ from rest_framework import serializers
 from app.models import Estoque, Pedido, ItemPedido, Produto, Loja
 from django.contrib.auth.models import Group
 from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.db import transaction
-
+from rest_framework_simplejwt.serializers import PasswordField
+from django.core.exceptions import ValidationError
+from django.core.validators import validate_email
+from django.contrib.auth.tokens import default_token_generator
+from rest_framework_simplejwt.serializers import (
+    TokenObtainPairSerializer as JwtTokenObtainPairSerializer,
+)
+from django.contrib.auth.password_validation import validate_password
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.utils import timezone
 
 class ItemPedidoSerializer(serializers.ModelSerializer):
     class Meta:
@@ -132,3 +142,81 @@ class EstoqueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Estoque
         fields = ['id', 'produto', 'loja', 'quantidade_atual', 'quantidade_minima']
+
+
+
+
+
+class PasswordResetKeyWebTokenSerializer(serializers.Serializer):
+    email = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        # validar email
+        try:
+            validate_email(attrs['email'])
+        except:
+            raise serializers.ValidationError("Email inválido")
+
+        email = attrs['email']
+
+        # buscar usuário
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Usuário com este email não encontrado")
+
+        # opcional (controle extra)
+        user.code_date = timezone.now()
+        user.save()
+
+        return {
+            'user': user.id,
+            'email': email,
+            'token': default_token_generator.make_token(user)
+        }
+
+
+class PasswordResetWebTokenSerializer(serializers.Serializer):
+    id = serializers.CharField(write_only=True)
+    email = serializers.CharField(write_only=True)
+    token = serializers.CharField(write_only=True)
+    new_password = serializers.CharField(write_only=True)
+    confirm_password = serializers.CharField(write_only=True)
+
+    def validate(self, attrs):
+        token_generator = default_token_generator
+
+        # buscar usuário
+        try:
+            user = User.objects.get(id=attrs['id'], email=attrs['email'])
+        except User.DoesNotExist:
+            raise serializers.ValidationError("Usuário não encontrado")
+
+        # validar senha
+        if attrs['new_password'] != attrs['confirm_password']:
+            raise serializers.ValidationError("As senhas não coincidem")
+
+        validate_password(attrs['new_password'], user)
+
+        # validar token
+        if not token_generator.check_token(user, attrs.get('token')):
+            raise serializers.ValidationError("Token inválido ou expirado")
+
+        # atualizar senha
+        user.is_active = True
+        user.set_password(attrs['new_password'])
+        user.save()
+
+        # gerar JWT automático
+        refresh = RefreshToken.for_user(user)
+
+        return {
+            'token': {
+                'refresh': str(refresh),
+                'access': str(refresh.access_token),
+            },
+            'user': {
+                'id': user.id,
+                'email': user.email
+            }
+        }
