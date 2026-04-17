@@ -8,16 +8,14 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 from app.api.v1.router import urlpatterns as api_urlpatterns
-from app.views import LoginView,LogoutView,PasswordResetKeyWebToken,PasswordResetWebToken
+from app.urls import urlpatterns as app_urlpatterns
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include(app_urlpatterns)),
     path('api/v1/', include(api_urlpatterns)),
     path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
     path('api/schema/swagger/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
-    path('login/', LoginView.as_view(), name='login'),
-    path('logout/', LogoutView.as_view(), name='logout'),
-    path('password-reset/', PasswordResetKeyWebToken.as_view(), name='password-reset'),
-    path('password-reset-confirm/', PasswordResetWebToken.as_view(), name='password-reset-confirm'),
 ]

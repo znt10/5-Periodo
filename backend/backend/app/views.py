@@ -9,6 +9,13 @@ from drf_spectacular.utils import extend_schema
 from django.contrib.auth import get_user_model 
 from app.api.v1 import serializers
 from django.utils import timezone
+from django.http import HttpResponse
+from django.template.loader import render_to_string
+from weasyprint import HTML
+import tempfile
+
+
+
 User = get_user_model()
 
 
@@ -106,3 +113,22 @@ class PasswordResetWebToken(APIView):
             return Response(serializer.validated_data, status=200)
 
         return Response(serializer.errors, status=400)
+
+
+
+class Gerar_PDF(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        context = {
+                'titulo': 'Relatório de Backend P5',
+                'usuario': request.user.username if request.user.is_authenticated else 'Visitante',
+                'itens': ['Django', 'WeasyPrint', 'Python 3.13', 'PDF Engine'],
+            }
+        html_string = render_to_string('pdf_template.html', context)
+        html = HTML(string=html_string)
+        pdf = html.write_pdf()
+        reponse = HttpResponse(pdf, content_type='application/pdf')
+        reponse['Content-Disposition'] = 'inline; filename="relatorio.pdf"'
+        return reponse
+

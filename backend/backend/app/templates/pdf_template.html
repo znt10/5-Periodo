@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <style>
+        /* Regra mágica para definir o papel */
+        @page {
+            size: A4;
+            margin: 1.5cm;
+            @bottom-right {
+                content: "Página " counter(page) " de " counter(pages);
+            }
+        }
+        body { font-family: sans-serif; line-height: 1.6; color: #333; }
+        .header { text-align: center; color: #4e73df; border-bottom: 2px solid #4e73df; }
+        .footer { position: fixed; bottom: 0; width: 100%; text-align: center; font-size: 10px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #f8f9fc; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Relatório Gerencial</h1>
+    </div>
+
+    <p>Olá, <strong>{{ usuario }}</strong>!</p>
+    <p>Este é um PDF gerado automaticamente pelo sistema.</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tecnologias Utilizadas</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in itens %}
+            <tr>
+                <td>{{ item }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+</html>

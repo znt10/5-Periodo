@@ -105,7 +105,20 @@ class UsuarioSerializer(serializers.ModelSerializer):
     
     # Validar se o username já existe para evitar erros de integridade no banco
     def validate_email(self, value):
+        """
+        Verifica se o e-mail pertence ao domínio da faculdade.
+        """
+        dominio_permitido = "fiponline.edu.br"
         email = value.lower()
+        sub = ["ads","med","arq","ec"]
+
+        emails_permitidos = [f"@{sub}.{dominio_permitido}" for sub in sub]
+
+        if not any(email.endswith(dom) for dom in emails_permitidos):
+
+            raise serializers.ValidationError(f"O e-mail deve pertencer pela faculdade")
+            
+
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError("Este email já está em uso.")
         return value
@@ -142,8 +155,6 @@ class EstoqueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Estoque
         fields = ['id', 'produto', 'loja', 'quantidade_atual', 'quantidade_minima']
-
-
 
 
 
