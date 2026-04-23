@@ -34,7 +34,17 @@ class ResponsavelOuAdminMixin(BaseMixin):
 
         instance.delete()
 
+class UserOuAdminMixin(BaseMixin):
 
+    def get_queryset(self):
+        user = self.request.user
+
+        if self.is_admin(user):
+            return super().get_queryset()
+
+        return super().get_queryset().filter(id=user.id)
+    
+    
 class ApenasAdminPodeCriarMixin(BaseMixin):
 
     def perform_create(self, serializer):

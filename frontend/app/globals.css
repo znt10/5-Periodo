@@ -1,19 +1,34 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
 
-@media (prefers-color-scheme: dark) {
+@layer base {
+  /* TEMA PADRÃO (Pode ser o Branco ou o Dark Blue) */
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    /* Exemplo: Definindo o tema BRANCO como padrão */
+    --color-base: 255 255 255; /* #ffffff */
+    --color-card: 243 244 246; /* gray-100 */
+    --color-header: 229 231 235; /* gray-200 */
+    --color-border: 209 213 219; /* gray-300 */
+    --color-hover: 229 231 235; /* gray-200 */
+    
+    /* Textos do tema claro */
+    --color-text-title: 17 24 39; /* gray-900 */
+    --color-text-normal: 55 65 81; /* gray-700 */
   }
-}
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  /* ATIVAÇÃO DO TEMA DARK BLUE */
+  /* Quando o atributo data-theme="dark-blue" estiver no <html>, 
+     estas variáveis substituirão as padrões */
+  [data-theme="dark-blue"] {
+    /* Sua paleta original convertida */
+    --color-base: 10 15 28;    /* #0a0f1c */
+    --color-card: 18 24 38;    /* #121826 */
+    --color-header: 22 27 46;  /* #161b2e */
+    --color-border: 31 42 68;  /* #1f2a44 */
+    --color-hover: 26 34 56;   /* #1a2238 */
+    
+    /* Textos do tema dark blue */
+    --color-text-title: 255 255 255; /* white */
+    --color-text-normal: 203 213 225; /* gray-300 */
+  }
 }

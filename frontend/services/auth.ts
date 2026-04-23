@@ -9,6 +9,11 @@ export const login = async (email: string, password: string) => {
     }),
   });
 };
+export const getCurrentUser = async () => {
+  return apiV1('/user/me/', {
+    method: 'GET',
+  });
+}
 
 
 export const logout = async () => {

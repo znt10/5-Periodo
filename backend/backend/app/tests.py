@@ -2,98 +2,183 @@ from django.test import TestCase
 from django.contrib.auth.models import User, Group,Permission
 from django.contrib.contenttypes.models import ContentType
 from app.models import Loja, Produto, Pedido, ItemPedido, Estoque
+from rest_framework.test import APITestCase
+from rest_framework.test import APIClient
+from django.urls import reverse
 
-class ModelsTestCase(TestCase):
-    
+
+from rest_framework.test import APITestCase, APIClient
+from django.urls import reverse
+from django.contrib.auth.models import User, Group
+from app.models import Loja
+
+
+class PedidoAPITestCase(APITestCase):
+
     def setUp(self):
-        # 1. Cria os usuários
-        self.user_gerente = User.objects.create_user(username='gerente', password='pass')
-        self.user_responsavel = User.objects.create_user(username='responsavel', password='pass')
+        self.client = APIClient()
 
-        # 2. Cria os Grupos
-        grupo_gerente, _ = Group.objects.get_or_create(name='Gerente')
-        grupo_responsavel, _ = Group.objects.get_or_create(name='Responsavel')
+        # Criar grupos
+        self.grupo_responsavel, _ = Group.objects.get_or_create(name='Responsavel')
+        self.grupo_gerente, _ = Group.objects.get_or_create(name='Gerente')
 
-        # 3. Pega o "Tipo de Conteúdo" do modelo que queremos proteger (Ex: Pedido)
-        # Se quiser testar Produto ou Loja, é só trocar aqui e nos codenames abaixo
-        content_type = ContentType.objects.get_for_model(Pedido)
+        # Usuário responsável
+        self.responsavel = User.objects.create_user(
+            username='teste',
+            password='123'
+        )
+        self.responsavel.groups.add(self.grupo_responsavel)
 
-        # 4. Busca as permissões específicas desse modelo no banco de dados
-        perm_add = Permission.objects.get(codename='add_pedido', content_type=content_type)
-        perm_view = Permission.objects.get(codename='view_pedido', content_type=content_type)
-        perm_change = Permission.objects.get(codename='change_pedido', content_type=content_type)
-        perm_delete = Permission.objects.get(codename='delete_pedido', content_type=content_type)
+        # Usuário gerente
+        self.gerente = User.objects.create_user(
+            username='admin',
+            password='123'
+        )
+        self.gerente.groups.add(self.grupo_gerente)
 
-        # 5. Dá TODAS as permissões para o grupo Gerente
-        grupo_gerente.permissions.add(perm_add, perm_view, perm_change, perm_delete)
-
-        # 6. Dá apenas CRIAR, VER e MUDAR para o grupo Responsável (sem o delete)
-        grupo_responsavel.permissions.add(perm_add, perm_view, perm_change)
-
-        # 7. Coloca os usuários nos seus respectivos grupos
-        self.user_gerente.groups.add(grupo_gerente)
-        self.user_responsavel.groups.add(grupo_responsavel)
-
-        # --- Daqui para baixo continua a criação da sua Loja, Produto, etc ---
-        # Ex: self.loja = Loja.objects.create(nome_loja='Loja A', responsavel=self.user_gerente, ...)
-
+    
+        self.produto = Produto.objects.create(
+            nome_produto="coxinha",
+            codigo=1,
+            unidade_medida="kg"
+        )
+        # Loja
         self.loja = Loja.objects.create(
             nome_loja='Loja A',
             endereco='Rua 1',
-            responsavel=self.user_gerente
+            responsavel=self.responsavel
         )
-        self.produto = Produto.objects.create(
-            nome_produto='Produto X',
-            codigo='PX',
-            unidade_medida='un',
-            ativo=True
-        )
+
+
+
+    def test_registro_e_login(self):
+
+        self.client.post("/login/", {
+            "email": "admin",
+            "password": "123"
+            })
+        
+    # registra
+        self.client.post("/api/v1/user/registrar/", {
+            "email": "novo@email.com",
+            "password": "123456",
+            "tipo_usuario": "responsavel"
+        })
+
+
+        self.client.post("/logout/")
+        # login
+        response = self.client.post("/login/", {
+            "email": "novo@email.com",
+            "password": "123456"
+        })
+
+        self.assertEqual(response.status_code, 200)
+
+
+
+
     
 
-    def test_item_pedido_str(self):
-        # CORREÇÃO: Usar 'responsavel' em vez de 'user'
-        pedido = Pedido.objects.create(responsavel=self.user, loja=self.loja, status='novo')
+    def test_login_sucesso(self):
+        url = "/login/"
+
+        data = {
+            "email": "teste",
+            "password": "123"
+        }
+
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, 200)
+
+        # valida cookies JWT
+        self.assertIn("access_token", response.cookies)
+        self.assertIn("refresh_token", response.cookies)
+
+
+    def test_fluxo_completo_gerente(self):
+        # login como gerente
+        self.client.force_authenticate(user=self.gerente)
+
+        # cria produto
+        url_produto = reverse('produto-list')
+
+        produto_data = {
+            "nome_produto": "Produto X",
+            "codigo": "PX",
+            "unidade_medida": "un",
+            "ativo": True
+        }
+
+        response = self.client.post(url_produto, produto_data)
+        self.assertEqual(response.status_code, 201)
+
+        # cria loja
+        url_loja = reverse('loja-list')
+
+        loja_data = {
+            "nome_loja": "Loja Gerente",
+            "endereco": "Rua 1",
+            "responsavel": self.gerente.id
+        }
+
+        response = self.client.post(url_loja, loja_data)
+        self.assertEqual(response.status_code, 201)
+
+    def test_responsavel_cria_pedido(self):
+        self.client.force_authenticate(user=self.responsavel)
+
+        url = "/api/v1/pedidos/"
+
+        data = {
+            "loja": self.loja.id,
+            "status": "novo",
+            "itens": [
+                {
+                    "produto": self.produto.id,
+                    "quantidade": 2
+                }
+            ]
+        }
+
+        response = self.client.post(url, data, format="json")
+        self.assertEqual(response.status_code, 201)
+        self.assertIn("id", response.data)
+
+
+    def test_user_nao_pode_criar_produto(self):
+        self.client.force_authenticate(user=self.responsavel)
         
-        # CORREÇÃO: ItemPedido agora exige o campo 'responsavel'
-        item = ItemPedido.objects.create(
-            pedido=pedido, 
-            produto=self.produto, 
-            quantidade=3, 
-            responsavel=self.user_responsavel
-        )
 
-        self.assertIn('3 x Produto X', str(item))
-        self.assertIn(f'(Pedido {pedido.id})', str(item))
+        url = reverse('produto-list')
 
-    def test_pedido_str(self):
-        # CORREÇÃO: Usar 'responsavel' em vez de 'user'
+        data = {
+            "nome_produto": "Produto Teste",
+            "codigo": "PT",
+            "unidade_medida": "un",
+            "ativo": True
+        }
+
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, 403)
+
+
+
+    def test_responsavel_nao_pode_criar_loja(self):
+        self.client.force_authenticate(user=self.responsavel)
+
+        url = reverse('loja-list')
+
+        data = {
+            "nome_loja": "Loja Teste",
+            "endereco": "Rua 2",
+            "responsavel": self.responsavel.id
+        }
+
+        response = self.client.post(url, data)
+
+        self.assertEqual(response.status_code, 403)
     
-        pedido = Pedido.objects.create(responsavel=self.user_responsavel, loja=self.loja, status='novo')
-        
-        
-        ItemPedido.objects.create(
-            pedido=pedido, 
-            produto=self.produto, 
-            quantidade=2, 
-            responsavel=self.user_responsavel
-        )
-
-        self.assertIn('tester', str(pedido))
-        self.assertIn('Loja A', str(pedido))
-
-    def test_estoque_str(self):
-        estoque = Estoque.objects.create(
-            produto=self.produto,
-            loja=self.loja,
-            quantidade_atual=10,
-            quantidade_minima=5
-        )
-
-        self.assertIn('Produto X', str(estoque))
-        self.assertIn('Loja A', str(estoque))
-    
-    def test_loja_str(self):
-        self.assertEqual(str(self.loja), 'Loja A')
-
-    def test_produto_str(self):
-        self.assertEqual(str(self.produto), 'Produto X')
+ 

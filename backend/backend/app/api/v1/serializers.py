@@ -55,7 +55,8 @@ class PedidoSerializer(serializers.ModelSerializer):
             ItemPedido.objects.create(
                 pedido=pedido,
                 produto=item['produto'],
-                quantidade=item['quantidade']
+                quantidade=item['quantidade'],
+                responsavel=user
             )
 
         return pedido
@@ -95,8 +96,8 @@ class UsuarioSerializer(serializers.ModelSerializer):
     
     # Validar se o username já existe para evitar erros de integridade no banco
     def validate_email(self, value):
-        email = value.lower()
-        if User.objects.filter(email=email).exists():
+        value = value.lower()
+        if User.objects.filter(email=value).exists():
             raise serializers.ValidationError("Este email já está em uso.")
         return value
 
