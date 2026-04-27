@@ -1,29 +1,21 @@
-import { create } from 'zustand'
-import { persist } from 'zustand/middleware'
+import { create } from 'zustand';
+import { persist } from 'zustand/middleware';
 
-type User = {
-  id: number
-  email: string
-  group: string | null
+interface AuthState {
+  user: any;
+  theme: 'Claro' | 'Dark Blue'; // Tipagem para evitar erros
+  setUser: (user: any) => void;
+  setTheme: (theme: 'Claro' | 'Dark Blue') => void;
 }
 
-type AuthStore = {
-  user: User | null
-  setUser: (user: User) => void
-  clearUser: () => void
-}
-
-export const useAuthStore = create<AuthStore>()(
+export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-
+      theme: 'Dark Blue', // Valor inicial
       setUser: (user) => set({ user }),
-
-      clearUser: () => set({ user: null }),
+      setTheme: (theme) => set({ theme }),
     }),
-    {
-      name: 'auth-storage',
-    }
+    { name: 'auth-storage' } // Chave no LocalStorage
   )
-)
+);

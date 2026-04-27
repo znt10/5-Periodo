@@ -30,28 +30,28 @@ def is_gerente_ou_admin(user):
 class LojaViewSet(viewsets.ModelViewSet):
     queryset = Loja.objects.all()
     serializer_class = LojaSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsGerenteOrAdministrador]
 
 
 # 🔹 ESTOQUE
 class EstoqueViewSet(viewsets.ModelViewSet):
     queryset = Estoque.objects.all()
     serializer_class = EstoqueSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsGerenteOrAdministrador]
 
 
 # 🔹 PRODUTO
 class ProdutoViewSet(viewsets.ModelViewSet):
     queryset = Produto.objects.all()
     serializer_class = ProdutoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsGerenteOrAdministrador]
 
 
 # 🔹 ITEM PEDIDO 
 class ItemPedidoViewSet(ResponsavelOuAdminMixin,viewsets.ModelViewSet):
     queryset = ItemPedido.objects.all()
     serializer_class = ItemPedidoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsGerenteOrAdministradorOrResponsavel]
 
     def get_queryset(self):
         user = self.request.user
@@ -67,7 +67,7 @@ class ItemPedidoViewSet(ResponsavelOuAdminMixin,viewsets.ModelViewSet):
 class PedidoViewSet(ResponsavelOuAdminMixin, viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class = PedidoSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated,IsGerenteOrAdministradorOrResponsavel]
 
 
 # 🔹 USUÁRIO
