@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Sidebar from "@/components/Sidebar";
 import Link from "next/link";
+import { useTheme } from "@/hooks/useTheme"; // 👇 1. Importamos o hook global
 
 const Icons = {
   Palette: () => (
@@ -100,13 +101,10 @@ const Icons = {
 };
 
 export default function PersonalizacaoPerfil() {
-  // 1. Criamos o estado para controlar o tema atual (inicia como Dark Blue)
-  const [temaAtual, setTemaAtual] = useState("Dark Blue");
+  const { theme: temaAtual, setTheme: setTemaAtual, isDark } = useTheme();
 
-  // 2. Variáveis de cor dinâmicas baseadas no tema selecionado
-  const isDark = temaAtual === "Dark Blue";
-
-  const bgPrincipal = isDark ? "bg-[#0a0f1c]" : "bg-[#f8fafc]"; // slate-50
+  // 3. As variáveis de cor continuam idênticas!
+  const bgPrincipal = isDark ? "bg-[#0a0f1c]" : "bg-[#f8fafc]";
   const bgCard = isDark ? "bg-[#121826]" : "bg-white";
   const bgIcone = isDark ? "bg-[#0f1629]" : "bg-blue-50";
   const corBorda = isDark ? "border-[#1f2a44]" : "border-gray-200";
@@ -142,6 +140,7 @@ export default function PersonalizacaoPerfil() {
       className={`flex min-h-screen ${bgPrincipal} font-sans antialiased transition-colors duration-300`}
     >
       <Sidebar />
+
       <main className="flex-1 lg:ml-64 p-8 md:p-12 transition-all duration-300">
         <div className="flex flex-col md:flex-row justify-between items-start gap-6 mb-14">
           <div>
@@ -173,10 +172,10 @@ export default function PersonalizacaoPerfil() {
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 max-w-lg gap-4">
             {/* Opções de Tema com Click */}
-            {["Claro", "Dark Blue"].map((tema) => (
+            {(["Claro", "Dark Blue"] as const).map((tema) => (
               <button
                 key={tema}
-                onClick={() => setTemaAtual(tema)} // 3. Ao clicar, muda o estado!
+                onClick={() => setTemaAtual(tema)} // 👇 Isso agora salva no Zustand e no LocalStorage!
                 className={`p-6 rounded-2xl border-2 transition-all cursor-pointer shadow-sm text-left flex flex-col items-center ${
                   temaAtual === tema
                     ? `${bgCard} border-blue-500 scale-[1.02] ring-4 ring-blue-500/10`

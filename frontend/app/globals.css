@@ -1,34 +1,49 @@
+
+
 @import "tailwindcss";
 
+/* 1. Ensinamos ao Tailwind v4 quais são as nossas classes personalizadas */
+@theme {
+  --color-theme-base: var(--base);
+  --color-theme-card: var(--card);
+  --color-theme-header: var(--header);
+  --color-theme-border: var(--border);
+  --color-theme-hover: var(--hover);
+  --color-theme-text-title: var(--text-title);
+  --color-theme-text-sub: var(--text-sub);
+}
 
-@layer base {
-  /* TEMA PADRÃO (Pode ser o Branco ou o Dark Blue) */
-  :root {
-    /* Exemplo: Definindo o tema BRANCO como padrão */
-    --color-base: 255 255 255; /* #ffffff */
-    --color-card: 243 244 246; /* gray-100 */
-    --color-header: 229 231 235; /* gray-200 */
-    --color-border: 209 213 219; /* gray-300 */
-    --color-hover: 229 231 235; /* gray-200 */
-    
-    /* Textos do tema claro */
-    --color-text-title: 17 24 39; /* gray-900 */
-    --color-text-normal: 55 65 81; /* gray-700 */
-  }
 
-  /* ATIVAÇÃO DO TEMA DARK BLUE */
-  /* Quando o atributo data-theme="dark-blue" estiver no <html>, 
-     estas variáveis substituirão as padrões */
-  [data-theme="dark-blue"] {
-    /* Sua paleta original convertida */
-    --color-base: 10 15 28;    /* #0a0f1c */
-    --color-card: 18 24 38;    /* #121826 */
-    --color-header: 22 27 46;  /* #161b2e */
-    --color-border: 31 42 68;  /* #1f2a44 */
-    --color-hover: 26 34 56;   /* #1a2238 */
-    
-    /* Textos do tema dark blue */
-    --color-text-title: 255 255 255; /* white */
-    --color-text-normal: 203 213 225; /* gray-300 */
-  }
+/* 2. Definimos as cores do Tema Claro (usando HEX, que o v4 aceita nativamente) */
+:root {
+  --base: #f8fafc;
+  --card: #ffffff;
+  --header: #eff6ff;
+  --border: #e5e7eb;
+  --hover: #f9fafb;
+  --text-title: #111827;
+  --text-sub: #6b7280;
+}
+
+/* 3. Definimos as cores do Tema Dark Blue */
+[data-theme="dark-blue"] {
+  --base: #0a0f1c;
+  --card: #121826;
+  --header: #0f1629;
+  --border: #1f2a44;
+  --hover: #1a2238;
+  --text-title: #ffffff;
+  --text-sub: #9ca3af;
+}
+
+/* ========================================= */
+/* BÔNUS: CORREÇÃO DA IMAGEM 1 (Auto-preenchimento) */
+/* ========================================= */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px var(--card) inset !important;
+    -webkit-text-fill-color: var(--text-title) !important;
+    transition: background-color 5000s ease-in-out 0s;
 }

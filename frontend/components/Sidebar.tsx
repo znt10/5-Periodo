@@ -237,6 +237,7 @@ const MENU_CONFIG: Record<
     { href: "/dashboard", label: "Painel Geral", icon: "Painel" },
     { href: "/lojas", label: "Gerenciar Lojas", icon: "Store" },
     { href: "/novopedido", label: "Novo Pedido", icon: "Plus" },
+    { href: "/Painel_unidade", label: "Painel_unidade", icon: "List" },
     { href: "/registrar", label: "Usuários", icon: "UserCircle" },
   ],
   Responsavel: [
@@ -305,7 +306,7 @@ export default function Sidebar() {
         </Link>
 
         {/* Perfil */}
-        <Link href="/">
+        <Link href="">
           <div
             className={`flex items-center gap-3 px-6 py-6 text-slate-300 overflow-hidden ${
               isCollapsed ? "justify-center px-0" : ""

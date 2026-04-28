@@ -4,6 +4,8 @@ import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 import { login, getCurrentUser } from "@/services/auth";
 import { useAuthStore } from "@/stores/authStore";
+// Importando os ícones corretos
+import { CubeIcon, EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -12,9 +14,11 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Estado para controlar a visibilidade da senha
+  const [showPassword, setShowPassword] = useState(false);
+
   const setUser = useAuthStore((state) => state.setUser);
 
-  // Simplificação: Dados dos campos de input
   const loginFields = [
     {
       id: "email",
@@ -30,25 +34,6 @@ export default function LoginPage() {
     },
   ];
 
-  // Componente de ícone para não repetir código SVG
-  const LogoIcon = ({ size = "24" }: { size?: string }) => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="white"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z" />
-      <path d="m3.3 7 8.7 5 8.7-5" />
-      <path d="M12 22V12" />
-    </svg>
-  );
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -56,11 +41,8 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
-
       const currentUser = await getCurrentUser();
-
       setUser(currentUser);
-
       router.push("/dashboard");
     } catch (err: any) {
       setError(err.message);
@@ -75,8 +57,8 @@ export default function LoginPage() {
       <div className="hidden w-1/2 flex-col items-center justify-center bg-[#020617] lg:flex">
         <div className="flex items-center gap-4">
           <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-[#1d4ed8]">
-            {/* Usando o Ícone do Heroicons aqui */}
-            <LogoIcon size="64" />
+            {/* Substituído pelo CubeIcon */}
+            <CubeIcon className="h-12 w-12 text-white" />
           </div>
           <h1 className="text-6xl font-bold text-white tracking-tight">
             UniStock
@@ -87,11 +69,11 @@ export default function LoginPage() {
       {/* LADO DIREITO */}
       <div className="flex w-full items-center justify-center p-8 lg:w-1/2">
         <div className="w-full max-w-md">
-          {/* Cabeçalho */}
           <header className="mb-10 flex flex-col items-center text-center">
             <div className="mb-4 flex items-center gap-2">
               <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#1d4ed8]">
-                <LogoIcon size="24" />
+                {/* Substituído pelo CubeIcon */}
+                <CubeIcon className="h-6 w-6 text-white" />
               </div>
               <span className="text-2xl font-bold">UniStock</span>
             </div>
@@ -108,18 +90,40 @@ export default function LoginPage() {
                   <label htmlFor={field.id} className="text-sm font-semibold">
                     {field.label}
                   </label>
-                  <input
-                    id={field.id}
-                    type={field.type}
-                    placeholder={field.placeholder}
-                    value={field.id === "email" ? email : password}
-                    onChange={(e) =>
-                      field.id === "email"
-                        ? setEmail(e.target.value)
-                        : setPassword(e.target.value)
-                    }
-                    className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 autofill:shadow-[inset_0_0_0px_1000px_white] [&:-webkit-autofill]:[-webkit-text-fill-color:#1e293b]"
-                  />
+                  <div className="relative">
+                    <input
+                      id={field.id}
+                      // Lógica para alternar entre 'password' e 'text'
+                      type={
+                        field.id === "password" && showPassword
+                          ? "text"
+                          : field.type
+                      }
+                      placeholder={field.placeholder}
+                      value={field.id === "email" ? email : password}
+                      onChange={(e) =>
+                        field.id === "email"
+                          ? setEmail(e.target.value)
+                          : setPassword(e.target.value)
+                      }
+                      className="w-full rounded-lg border border-slate-300 bg-white px-4 py-2.5 outline-none transition focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20"
+                    />
+
+                    {/* Botão do Olho dentro do campo de senha */}
+                    {field.id === "password" && (
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                      >
+                        {showPassword ? (
+                          <EyeSlashIcon className="h-5 w-5" />
+                        ) : (
+                          <EyeIcon className="h-5 w-5" />
+                        )}
+                      </button>
+                    )}
+                  </div>
                 </div>
               ))}
             </div>
@@ -143,14 +147,12 @@ export default function LoginPage() {
               </a>
             </div>
 
-            {/* Renderização da Mensagem de Erro Centralizada */}
             {error && (
               <div className="rounded-md bg-red-50 p-3 text-center text-sm font-medium text-red-600">
                 {error}
               </div>
             )}
 
-            {/* Botão de Ação */}
             <div className="mt-12">
               <button
                 type="submit"
@@ -158,19 +160,19 @@ export default function LoginPage() {
                 className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#4466f2] py-3.5 text-sm font-semibold text-white shadow-md transition hover:bg-blue-700 active:scale-[0.98] disabled:opacity-60"
               >
                 {loading ? "Entrando..." : "Continuar"}
+                {/* Ícone de seta simples */}
                 <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="18"
-                  height="18"
-                  viewBox="0 0 24 24"
+                  className="h-5 w-5"
                   fill="none"
+                  viewBox="0 0 24 24"
                   stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
                 >
-                  <path d="M5 12h14" />
-                  <path d="m12 5 7 7-7 7" />
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M13 7l5 5m0 0l-5 5m5-5H6"
+                  />
                 </svg>
               </button>
             </div>

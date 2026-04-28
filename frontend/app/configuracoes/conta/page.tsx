@@ -111,7 +111,7 @@ export default function GerenciarConta() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#0a0f1c] text-gray-300 font-sans antialiased">
+    <div className="flex min-h-screen bg-theme-base font-sans antialiased transition-colors duration-300">
       <Sidebar />
 
       <main className="flex-1 lg:ml-64 p-8 md:p-12 transition-all duration-300">
@@ -121,57 +121,58 @@ export default function GerenciarConta() {
             <span className="text-blue-500 text-[11px] font-black uppercase tracking-[4px] mb-3 block">
               Perfil do Usuário
             </span>
-            <h1 className="text-3xl font-bold tracking-tight text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-theme-text-title transition-colors">
               Gerenciar Conta
             </h1>
           </div>
 
           <Link
             href="/configuracoes"
-            /* Botão adaptado para tons escuros */
-            className="group bg-[#121826] border border-[#1f2a44] px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-[#1a2238] transition-all flex items-center gap-2 shadow-xl"
+            className="group bg-theme-card border border-theme-border px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest text-theme-text-sub hover:text-theme-text-title hover:bg-theme-hover transition-all flex items-center gap-2 shadow-sm"
           >
             <Icons.ChevronLeft /> Voltar
           </Link>
         </div>
 
-        {/* Card Perfil - Fundo #121826 e Borda #1f2a44 */}
-        <div className="max-w-4xl bg-[#121826] border border-[#1f2a44] rounded-[32px] p-8 mb-10 flex items-center gap-6 shadow-2xl">
-          <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-3xl font-black text-white shadow-lg border-4 border-[#0a0f1c]">
+        {/* Card Perfil principal */}
+        <div className="max-w-4xl bg-theme-card border border-theme-border rounded-[32px] p-8 mb-10 flex items-center gap-6 shadow-sm transition-all">
+          <div className="w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center text-3xl font-black text-white shadow-lg border-4 border-theme-base transition-all">
             U
           </div>
           <div>
-            <h2 className="text-2xl font-black text-white">Usuário UniStock</h2>
-            <p className="text-gray-400 font-medium">
+            <h2 className="text-2xl font-black text-theme-text-title transition-colors">
+              Usuário UniStock
+            </h2>
+            <p className="text-theme-text-sub font-medium transition-colors">
               Administrador de Unidade
             </p>
           </div>
         </div>
 
-        {/* Lista */}
+        {/* Lista de Opções */}
         <div className="max-w-4xl space-y-4">
           <div className="flex items-center gap-4 mb-6">
-            <span className="text-[10px] font-black text-gray-500 uppercase tracking-[3px]">
+            <span className="text-[10px] font-black text-theme-text-sub uppercase tracking-[3px] transition-colors">
               Segurança e Acesso
             </span>
-            <div className="h-[1px] flex-1 bg-[#1f2a44]"></div>
+            <div className="h-[1px] flex-1 bg-theme-border transition-colors"></div>
           </div>
 
           {opcoesConta.map((item, index) => (
             <button
               key={index}
-              className={`w-full bg-[#121826] border rounded-[24px] p-6 flex items-center justify-between transition-all group shadow-xl active:scale-[0.99] ${
+              className={`w-full bg-theme-card border rounded-[24px] p-6 flex items-center justify-between transition-all group shadow-sm active:scale-[0.99] ${
                 item.danger
                   ? "border-red-500/20 hover:bg-red-500/10 hover:border-red-500/30"
-                  : "border-[#1f2a44] hover:border-blue-500/40 hover:bg-[#1a2238]"
+                  : "border-theme-border hover:border-blue-500/40 hover:bg-theme-hover"
               }`}
             >
               <div className="flex items-center gap-4 md:gap-7">
                 <div
                   className={`p-4 rounded-[20px] border transition-all ${
                     item.danger
-                      ? "bg-[#0f1629] text-red-500 border-red-500/20 group-hover:border-red-500/30"
-                      : "bg-[#0f1629] text-blue-500 border-[#1f2a44] group-hover:border-blue-500/30"
+                      ? "bg-theme-header text-red-500 border-red-500/20 group-hover:border-red-500/30"
+                      : "bg-theme-header text-blue-500 border-theme-border group-hover:border-blue-500/30"
                   }`}
                 >
                   {item.icon}
@@ -182,12 +183,12 @@ export default function GerenciarConta() {
                     className={`text-[17px] md:text-[19px] font-black tracking-tight transition-colors ${
                       item.danger
                         ? "text-red-500"
-                        : "text-white group-hover:text-blue-400"
+                        : "text-theme-text-title group-hover:text-blue-500"
                     }`}
                   >
                     {item.titulo}
                   </h3>
-                  <p className="text-gray-400 text-xs md:text-sm font-medium mt-1">
+                  <p className="text-theme-text-sub text-xs md:text-sm font-medium mt-1 transition-colors">
                     {item.subtitulo}
                   </p>
                 </div>
@@ -197,7 +198,7 @@ export default function GerenciarConta() {
                 className={`p-2 rounded-full border transition-all ${
                   item.danger
                     ? "text-red-400 border-red-500/20 group-hover:translate-x-1"
-                    : "text-gray-500 border-[#1f2a44] group-hover:text-blue-500 group-hover:border-blue-500/30 group-hover:translate-x-1"
+                    : "text-theme-text-sub border-theme-border group-hover:text-blue-500 group-hover:border-blue-500/30 group-hover:translate-x-1"
                 }`}
               >
                 <Icons.ChevronRight />

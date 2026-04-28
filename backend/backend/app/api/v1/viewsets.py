@@ -30,8 +30,18 @@ def is_gerente_ou_admin(user):
 class LojaViewSet(viewsets.ModelViewSet):
     queryset = Loja.objects.all()
     serializer_class = LojaSerializer
-    permission_classes = [IsAuthenticated,IsGerenteOrAdministrador]
+    
+    def get_permissions(self):
+        if self.action == 'list':
+            return [AllowAny()]
+        return [IsAuthenticated(), IsGerenteOrAdministrador()]
 
+    def get_queryset(self):
+        user = self.request.user
+        # Se for um Responsável já logado, ele só vê a própria loja (opcional)
+        if user.is_authenticated and user.groups.filter(name='Responsavel').exists():
+            return Loja.objects.filter(responsavel=user) # Ajuste conforme seu model
+        return Loja.objects.all()
 
 # 🔹 ESTOQUE
 class EstoqueViewSet(viewsets.ModelViewSet):
@@ -78,17 +88,25 @@ class UsuarioViewSet(UserOuAdminMixin, viewsets.ModelViewSet):
 
     @action(detail=False, methods=['get'], url_path='me')
     def me(self, request):
-        user = request.user
+            user = request.user
+            
+            group = None
+            if user.groups.exists():
+                group = user.groups.first().name
 
-        group = None
-        if user.groups.exists():
-            group = user.groups.first().name
+            # Busca a loja vinculada (ajuste o filtro conforme seu banco)
+            loja_vinculada = Loja.objects.filter(responsavel=user).first()
 
-        return Response({
-            "id": user.id,
-            "email": user.email,
-            "group": group
-    })
+            return Response({
+                "id": user.id,
+                "first_name": user.first_name,
+                "email": user.email,
+                "group": group,
+                "loja": {
+                    "id": loja_vinculada.id,
+                    "nome": loja_vinculada.nome
+                } if loja_vinculada else None
+            })
     
     def create(self, request, *args, **kwargs):
         return Response(
@@ -96,13 +114,32 @@ class UsuarioViewSet(UserOuAdminMixin, viewsets.ModelViewSet):
             status=status.HTTP_405_METHOD_NOT_ALLOWED
         )
 
-    @action(detail=False, methods=['post'], permission_classes=[IsAuthenticated, IsGerenteOrAdministrador])
+    @action(detail=False, methods=['post'], permission_classes=[AllowAny]) # Permitir deslogado criar conta
     def registrar(self, request):
-       
-        
-        serializer = self.get_serializer(data=request.data)
+        data = request.data
+        id_loja = data.get('id_loja') # ID vindo do select do React
+        tipo_usuario = data.get('tipo_usuario')
+
+        serializer = self.get_serializer(data=data)
         if serializer.is_valid():
-            serializer.save()
+            user = serializer.save() # Cria o usuário
+
+            # 1. Adicionar ao grupo correto
+            from django.contrib.auth.models import Group
+            group_name = 'Gerente' if tipo_usuario == 'gerente' else 'Responsavel'
+            grupo = Group.objects.get(name=group_name)
+            user.groups.add(grupo)
+
+            # 2. Se for Responsável, vincula à loja
+            if group_name == 'Responsavel' and id_loja:
+                try:
+                    loja = Loja.objects.get(id=id_loja)
+                    # Se o seu model Loja tem o campo 'responsavel':
+                    loja.responsavel = user 
+                    loja.save()
+                except Loja.DoesNotExist:
+                    return Response({"error": "Loja não encontrada"}, status=status.HTTP_400_BAD_REQUEST)
+
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

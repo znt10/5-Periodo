@@ -96,7 +96,7 @@ const Icons = {
       strokeLinecap="round"
       strokeLinejoin="round"
     >
-      <path d="m9 18 6-6 6-6" />
+      <path d="m9 18 6-6-6-6" />
     </svg>
   ),
 };
@@ -127,7 +127,7 @@ export default function PrivacidadeSeguranca() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#0a0f1c] text-gray-300 font-sans antialiased">
+    <div className="flex min-h-screen bg-theme-base font-sans antialiased transition-colors duration-300">
       <Sidebar />
 
       <main className="flex-1 lg:ml-64 p-8 md:p-12 transition-all duration-300">
@@ -137,15 +137,14 @@ export default function PrivacidadeSeguranca() {
             <span className="text-blue-500 text-[11px] font-black uppercase tracking-[4px] mb-3 block">
               Proteção de Dados
             </span>
-            <h1 className="text-3xl font-bold tracking-tight text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-theme-text-title transition-colors">
               Privacidade e Segurança
             </h1>
           </div>
 
           <Link
             href="/configuracoes"
-            /* Botão Voltar atualizado */
-            className="group bg-[#121826] border border-[#1f2a44] px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-[#1a2238] transition-all flex items-center gap-2 shadow-lg"
+            className="group bg-theme-card border border-theme-border px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest text-theme-text-sub hover:text-theme-text-title hover:bg-theme-hover transition-all flex items-center gap-2 shadow-sm"
           >
             <Icons.ChevronLeft /> Voltar
           </Link>
@@ -156,10 +155,9 @@ export default function PrivacidadeSeguranca() {
           <input
             type="text"
             placeholder="PESQUISAR PRIVACIDADE..."
-            /* Input adaptado para fundos escuros */
-            className="w-full bg-[#121826] border border-[#1f2a44] rounded-2xl py-5 pl-14 pr-6 text-[13px] font-black text-white focus:border-blue-500/50 outline-none transition-all placeholder:text-gray-500 placeholder:tracking-[2px] shadow-2xl"
+            className="w-full bg-theme-card border border-theme-border rounded-2xl py-5 pl-14 pr-6 text-[13px] font-black text-theme-text-title focus:border-blue-500/50 outline-none transition-all placeholder:text-theme-text-sub/50 placeholder:tracking-[2px] shadow-sm"
           />
-          <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition-colors">
+          <div className="absolute left-5 top-1/2 -translate-y-1/2 text-theme-text-sub group-focus-within:text-blue-500 transition-colors">
             <svg
               width="20"
               height="20"
@@ -177,34 +175,33 @@ export default function PrivacidadeSeguranca() {
         {/* Lista */}
         <div className="max-w-4xl space-y-4">
           <div className="flex items-center gap-4 mb-6">
-            <span className="text-[10px] font-black text-gray-500 uppercase tracking-[3px]">
+            <span className="text-[10px] font-black text-theme-text-sub uppercase tracking-[3px] transition-colors">
               Configurações Críticas
             </span>
-            <div className="h-[1px] flex-1 bg-[#1f2a44]"></div>
+            <div className="h-[1px] flex-1 bg-theme-border transition-colors"></div>
           </div>
 
           {opcoes.map((item, index) => (
             <button
               key={index}
-              /* Botão da Lista com cores Dark Blue */
-              className="w-full bg-[#121826] border border-[#1f2a44] rounded-[24px] p-6 flex items-center justify-between hover:border-blue-500/40 hover:bg-[#1a2238] transition-all group shadow-xl active:scale-[0.99]"
+              className="w-full bg-theme-card border border-theme-border rounded-[24px] p-6 flex items-center justify-between hover:border-blue-500/40 hover:bg-theme-hover transition-all group shadow-sm active:scale-[0.99]"
             >
               <div className="flex items-center gap-4 md:gap-7">
-                <div className="bg-[#0f1629] p-4 rounded-[20px] text-blue-500 border border-[#1f2a44] group-hover:border-blue-500/30 group-hover:scale-105 transition-all shadow-inner">
+                <div className="bg-theme-header p-4 rounded-[20px] text-blue-500 border border-theme-border group-hover:border-blue-500/30 group-hover:scale-105 transition-all">
                   {item.icon}
                 </div>
 
                 <div className="text-left">
-                  <h3 className="text-[17px] md:text-[19px] font-black text-white group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-[17px] md:text-[19px] font-black text-theme-text-title group-hover:text-blue-500 transition-colors">
                     {item.titulo}
                   </h3>
-                  <p className="text-gray-400 text-xs md:text-sm font-medium mt-1">
+                  <p className="text-theme-text-sub text-xs md:text-sm font-medium mt-1 transition-colors">
                     {item.subtitulo}
                   </p>
                 </div>
               </div>
 
-              <div className="bg-[#0f1629] p-2 rounded-full text-gray-500 border border-[#1f2a44] group-hover:text-blue-500 group-hover:border-blue-500/30 group-hover:translate-x-1 transition-all">
+              <div className="bg-theme-header p-2 rounded-full text-theme-text-sub border border-theme-border group-hover:text-blue-500 group-hover:border-blue-500/30 group-hover:translate-x-1 transition-all">
                 <Icons.ChevronRight />
               </div>
             </button>
@@ -212,7 +209,7 @@ export default function PrivacidadeSeguranca() {
         </div>
 
         {/* Rodapé */}
-        <p className="mt-12 text-gray-500 text-[11px] font-medium max-w-2xl leading-relaxed">
+        <p className="mt-12 text-theme-text-sub text-[11px] font-medium max-w-2xl leading-relaxed transition-colors">
           Suas informações de segurança são protegidas por criptografia de ponta
           a ponta. A UniStock não compartilha dados sensíveis com terceiros sem
           sua autorização explícita.

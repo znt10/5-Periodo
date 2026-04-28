@@ -27,7 +27,8 @@ export const register = async (
   first_name: string,
   email: string,
   password: string,
-  tipo_usuario: string
+  tipo_usuario: string,
+  id_loja?: number | string
 ) => {
     return apiV1('/user/registrar/', {
     method: 'POST',
@@ -36,6 +37,15 @@ export const register = async (
       email,
       password,
       tipo_usuario,
+      id_loja: id_loja || null,
     }),
   });
 };
+
+
+export const getLoja = async () => {
+  return apiV1('/lojas/', {
+    method: 'GET',
+  });
+  
+}

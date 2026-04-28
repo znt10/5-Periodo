@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Link from "next/link";
 
@@ -97,35 +97,50 @@ const Icons = {
 };
 
 export default function NotificacoesAlertas() {
-  const opcoesNotificacoes = [
+  // 👇 Transformei em estado para que você possa clicar e ligar/desligar as opções na tela
+  const [notificacoes, setNotificacoes] = useState([
     {
+      id: 1,
       titulo: "Alertas de Stock Baixo",
       subtitulo: "Receber avisos quando produtos atingirem o limite mínimo.",
       icon: <Icons.AlertTriangle />,
       active: true,
     },
     {
+      id: 2,
       titulo: "Notificações por E-mail",
       subtitulo: "Relatórios diários e resumos de movimentação.",
       icon: <Icons.Mail />,
       active: true,
     },
     {
+      id: 3,
       titulo: "Push no Navegador",
       subtitulo: "Alertas em tempo real sobre novos pedidos.",
       icon: <Icons.Bell />,
       active: false,
     },
     {
+      id: 4,
       titulo: "Mensagens SMS",
       subtitulo: "Alertas críticos enviados para o telemóvel registado.",
       icon: <Icons.Smartphone />,
       active: false,
     },
-  ];
+  ]);
+
+  // Função para alternar o status do toggle
+  const toggleNotificacao = (id: number) => {
+    setNotificacoes((prev) =>
+      prev.map((notif) =>
+        notif.id === id ? { ...notif, active: !notif.active } : notif,
+      ),
+    );
+  };
 
   return (
-    <div className="flex min-h-screen bg-[#0a0f1c] text-gray-300 font-sans antialiased">
+    // 👇 Fundo principal dinâmico
+    <div className="flex min-h-screen bg-theme-base font-sans antialiased transition-colors duration-300">
       <Sidebar />
 
       <main className="flex-1 lg:ml-64 p-8 md:p-12 transition-all duration-300">
@@ -135,14 +150,14 @@ export default function NotificacoesAlertas() {
             <span className="text-blue-500 text-[11px] font-black uppercase tracking-[4px] mb-3 block">
               Comunicações do Sistema
             </span>
-            <h1 className="text-3xl font-bold tracking-tight text-white">
+            <h1 className="text-3xl font-bold tracking-tight text-theme-text-title transition-colors">
               Notificações
             </h1>
           </div>
           <Link
             href="/configuracoes"
-            /* Botão adaptado para tons escuros */
-            className="group bg-[#121826] border border-[#1f2a44] px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest text-gray-400 hover:text-white hover:bg-[#1a2238] transition-all flex items-center gap-2 shadow-xl"
+            // 👇 Botão adaptado ao tema
+            className="group bg-theme-card border border-theme-border px-6 py-3 rounded-xl text-[11px] font-black uppercase tracking-widest text-theme-text-sub hover:text-theme-text-title hover:bg-theme-hover transition-all flex items-center gap-2 shadow-sm"
           >
             <Icons.ChevronLeft /> Voltar
           </Link>
@@ -151,43 +166,48 @@ export default function NotificacoesAlertas() {
         {/* Lista de Opções */}
         <div className="max-w-4xl space-y-4">
           <div className="flex items-center gap-4 mb-6">
-            <span className="text-[10px] font-black text-gray-500 uppercase tracking-[3px]">
+            <span className="text-[10px] font-black text-theme-text-sub uppercase tracking-[3px] transition-colors">
               Configurações de Avisos
             </span>
-            <div className="h-[1px] flex-1 bg-[#1f2a44]"></div>
+            <div className="h-[1px] flex-1 bg-theme-border transition-colors"></div>
           </div>
 
-          {opcoesNotificacoes.map((item, index) => (
-            <div
-              key={index}
-              /* Card de Opção #121826 com bordas e hover coerentes */
-              className="w-full bg-[#121826] border border-[#1f2a44] rounded-[24px] p-6 flex items-center justify-between hover:border-blue-500/40 hover:bg-[#1a2238] transition-all group shadow-xl"
+          {notificacoes.map((item) => (
+            <button
+              key={item.id}
+              onClick={() => toggleNotificacao(item.id)}
+              // 👇 Card adaptado com classes semânticas e transformado em botão para clique
+              className="w-full bg-theme-card border border-theme-border rounded-[24px] p-6 flex items-center justify-between hover:border-blue-500/40 hover:bg-theme-hover transition-all group shadow-sm active:scale-[0.99] cursor-pointer"
             >
               <div className="flex items-center gap-4 md:gap-7">
-                {/* Ícone Container bg-[#0f1629] */}
-                <div className="bg-[#0f1629] p-4 rounded-[20px] text-blue-500 border border-[#1f2a44] group-hover:border-blue-500/30 transition-all">
+                {/* Ícone Container */}
+                <div className="bg-theme-header p-4 rounded-[20px] text-blue-500 border border-theme-border group-hover:border-blue-500/30 transition-all">
                   {item.icon}
                 </div>
 
                 <div className="text-left">
-                  <h3 className="text-[17px] md:text-[19px] font-black text-white tracking-tight group-hover:text-blue-400 transition-colors">
+                  <h3 className="text-[17px] md:text-[19px] font-black text-theme-text-title tracking-tight group-hover:text-blue-500 transition-colors">
                     {item.titulo}
                   </h3>
-                  <p className="text-gray-400 text-xs md:text-sm font-medium mt-1">
+                  <p className="text-theme-text-sub text-xs md:text-sm font-medium mt-1 transition-colors">
                     {item.subtitulo}
                   </p>
                 </div>
               </div>
 
-              {/* Toggle Switch Simulado (atualizado o bg inativo) */}
+              {/* Toggle Switch */}
               <div
-                className={`w-12 h-6 rounded-full p-1 transition-all duration-300 ${item.active ? "bg-blue-600" : "bg-[#1f2a44]"}`}
+                className={`w-12 h-6 rounded-full p-1 transition-all duration-300 ${
+                  item.active ? "bg-blue-600" : "bg-theme-border"
+                }`}
               >
                 <div
-                  className={`bg-white w-4 h-4 rounded-full shadow-md transition-all duration-300 ${item.active ? "translate-x-6" : "translate-x-0"}`}
+                  className={`bg-white w-4 h-4 rounded-full shadow-md transition-all duration-300 ${
+                    item.active ? "translate-x-6" : "translate-x-0"
+                  }`}
                 ></div>
               </div>
-            </div>
+            </button>
           ))}
         </div>
       </main>

@@ -126,33 +126,32 @@ export default function Configuracoes() {
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#0a0f1c] text-gray-300 font-sans antialiased">
+    <div className="flex min-h-screen bg-theme-base font-sans antialiased transition-colors duration-300">
       <Sidebar />
 
-      <main className="flex-1 lg:ml-64 p-8 md:p-12 transition-all">
+      <main className="flex-1 lg:ml-64 p-8 md:p-12 transition-all duration-300">
         {/* Header */}
         <div className="mb-14">
           <span className="text-blue-500 text-[11px] font-black uppercase tracking-[4px] mb-3 block">
             Painel Administrativo
           </span>
-          <h1 className="text-3xl font-bold tracking-tight text-white">
+          <h1 className="text-3xl font-bold tracking-tight text-theme-text-title transition-colors">
             Configurações
           </h1>
-          <p className="text-gray-400 text-sm mt-1">
+          <p className="text-theme-text-sub text-sm mt-1 transition-colors">
             Ajuste os parâmetros do sistema e gerencie suas preferências de
             segurança.
           </p>
         </div>
 
-        {/* Search Bar */}
+        {/* Barra de Busca */}
         <div className="relative max-w-2xl mb-16 group">
           <input
             type="text"
             placeholder="O QUE VOCÊ ESTÁ PROCURANDO?"
-            /* Input adaptado para o novo fundo e bordas */
-            className="w-full bg-[#121826] border border-[#1f2a44] rounded-2xl py-5 pl-14 pr-6 text-[13px] font-black text-white focus:border-blue-600 outline-none transition-all placeholder:text-gray-500 placeholder:tracking-[2px]"
+            className="w-full bg-theme-card border border-theme-border rounded-2xl py-5 pl-14 pr-6 text-[13px] font-black text-theme-text-title focus:border-blue-600 outline-none transition-all placeholder:text-theme-text-sub/50 placeholder:tracking-[2px] shadow-sm"
           />
-          <div className="absolute left-5 top-1/2 -translate-y-1/2 text-gray-500 group-focus-within:text-blue-500 transition-colors">
+          <div className="absolute left-5 top-1/2 -translate-y-1/2 text-theme-text-sub group-focus-within:text-blue-600 transition-colors">
             <Icons.Search />
           </div>
         </div>
@@ -160,10 +159,10 @@ export default function Configuracoes() {
         {/* Seção de Opções */}
         <div className="max-w-5xl">
           <div className="flex items-center gap-4 mb-8">
-            <span className="text-[11px] font-black text-gray-500 uppercase tracking-[3px]">
+            <span className="text-[11px] font-black text-theme-text-sub uppercase tracking-[3px] transition-colors">
               Preferências Gerais
             </span>
-            <div className="h-[1px] flex-1 bg-[#1f2a44]"></div>
+            <div className="h-[1px] flex-1 bg-theme-border transition-colors"></div>
           </div>
 
           <div className="grid gap-5">
@@ -171,32 +170,31 @@ export default function Configuracoes() {
               <Link
                 href={secao.href}
                 key={index}
-                /* Cards adaptados com fundo #121826 e hover para #1a2238 */
-                className="w-full bg-[#121826] border border-[#1f2a44] rounded-[28px] p-7 flex items-center justify-between hover:border-blue-500/40 hover:bg-[#1a2238] transition-all group shadow-2xl active:scale-[0.985] text-left cursor-pointer"
+                className="w-full bg-theme-card border border-theme-border rounded-[28px] p-7 flex items-center justify-between hover:border-blue-500/40 hover:bg-theme-hover transition-all group shadow-sm active:scale-[0.985] text-left cursor-pointer"
               >
                 <div className="flex items-center gap-8">
-                  {/* Container de Ícone Interno #0f1629 */}
-                  <div className="bg-[#0f1629] p-5 rounded-[22px] text-blue-500 border border-[#1f2a44] group-hover:border-blue-500/30 group-hover:scale-105 transition-all shadow-inner shrink-0">
+                  {/* Container de Ícone Interno */}
+                  <div className="bg-theme-header p-5 rounded-[22px] text-blue-500 border border-theme-border group-hover:border-blue-500/30 group-hover:scale-105 transition-all shrink-0 shadow-inner">
                     {secao.icon}
                   </div>
 
                   <div>
                     <div className="flex items-center gap-3 mb-1">
-                      <h3 className="text-xl font-black text-white tracking-tight group-hover:text-blue-400 transition-colors">
+                      <h3 className="text-xl font-black text-theme-text-title tracking-tight group-hover:text-blue-500 transition-colors">
                         {secao.titulo}
                       </h3>
-                      <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 text-[9px] font-black px-2 py-0.5 rounded-md tracking-tighter uppercase">
+                      <span className="bg-blue-500/10 text-blue-500 border border-blue-500/20 text-[9px] font-black px-2 py-0.5 rounded-md tracking-tighter uppercase transition-all">
                         {secao.tag}
                       </span>
                     </div>
-                    <p className="text-gray-400 text-[15px] font-medium leading-relaxed">
+                    <p className="text-theme-text-sub text-[15px] font-medium leading-relaxed transition-colors">
                       {secao.subtitulo}
                     </p>
                   </div>
                 </div>
 
                 {/* Ícone de Chevron da Direita */}
-                <div className="bg-[#0f1629] p-3 rounded-full text-gray-500 border border-[#1f2a44] group-hover:text-blue-500 group-hover:border-blue-500/30 group-hover:translate-x-1 transition-all shrink-0">
+                <div className="bg-theme-header p-3 rounded-full text-theme-text-sub border border-theme-border group-hover:text-blue-500 group-hover:border-blue-500/30 group-hover:translate-x-1 transition-all shrink-0 shadow-inner">
                   <Icons.ChevronRight />
                 </div>
               </Link>
