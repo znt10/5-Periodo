@@ -8,7 +8,7 @@ from drf_spectacular.views import (
     SpectacularSwaggerView,
 )
 from app.api.v1.router import urlpatterns as api_urlpatterns
-from app.views import LoginView,LogoutView
+from app.views import LoginView,LogoutView,relatorio_pdf
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -18,4 +18,6 @@ urlpatterns = [
     path('api/schema/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
     path('login/', LoginView.as_view(), name='login'),
     path('logout/', LogoutView.as_view(), name='logout'),
+    path('gerar_pdf/',relatorio_pdf,name='gerar_pdf')
 ]
+    

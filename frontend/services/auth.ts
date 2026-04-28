@@ -43,9 +43,16 @@ export const register = async (
 };
 
 
-export const getLoja = async () => {
-  return apiV1('/lojas/', {
+export const getRelatorio = async () => {
+  // Usamos o fetch nativo para evitar as travas do seu apiFetch customizado
+  const response = await fetch("http://127.0.0.1:8000/gerar_pdf/", {
     method: 'GET',
   });
-  
-}
+
+  if (!response.ok) {
+    throw new Error(`Erro no servidor: ${response.status}`);
+  }
+
+  // Aqui está o pulo do gato: pegamos como blob (binário)
+  return await response.blob(); 
+};

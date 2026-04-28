@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import Sidebar from "@/components/Sidebar";
 import Link from "next/link";
+import { getRelatorio } from "@/services/auth";
 
 const Icons = {
   Building: () => (
@@ -65,6 +66,26 @@ const Icons = {
 };
 
 export default function GerenciaPedidos() {
+  const [isExporting, setIsExporting] = useState(false);
+
+  // Função para buscar o PDF e abrir em nova aba
+  const handleVerRelatorio = async () => {
+    setIsExporting(true);
+    try {
+      const blob = await getRelatorio();
+      const pdfUrl = URL.createObjectURL(blob);
+      window.open(pdfUrl, "_blank");
+
+      // Limpeza opcional após 1 minuto para não ocupar memória
+      setTimeout(() => URL.revokeObjectURL(pdfUrl), 60000);
+    } catch (error) {
+      console.error("Erro ao gerar relatório:", error);
+      alert("Houve um erro ao gerar o PDF de hoje.");
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   const unidades = [
     {
       id: 1,
@@ -87,6 +108,7 @@ export default function GerenciaPedidos() {
       <Sidebar />
 
       <main className="flex-1 lg:ml-64 p-6 md:p-10 transition-all">
+        {/* Cabeçalho */}
         <div className="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-4">
           <div>
             <span className="text-blue-500 text-[10px] font-black uppercase tracking-[2px] mb-1 block">
@@ -99,12 +121,47 @@ export default function GerenciaPedidos() {
               Visão geral das unidades e solicitações pendentes.
             </p>
           </div>
-          <button className="bg-theme-card border border-theme-border px-5 py-2.5 rounded-xl text-sm font-bold text-theme-text-title hover:bg-theme-hover transition-all">
-            Exportar Relatório
+
+          <button
+            onClick={handleVerRelatorio}
+            disabled={isExporting}
+            className={`
+              bg-theme-card border border-theme-border px-5 py-2.5 rounded-xl text-sm font-bold text-theme-text-title 
+              hover:bg-theme-hover transition-all flex items-center gap-3 active:scale-95
+              ${isExporting ? "opacity-50 cursor-not-allowed" : ""}
+            `}
+          >
+            {isExporting ? (
+              <>
+                <div className="h-4 w-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+                Gerando PDF...
+              </>
+            ) : (
+              <>
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <polyline points="10 9 9 9 8 9" />
+                </svg>
+                Visualizar Hoje
+              </>
+            )}
           </button>
         </div>
 
-        {/* Busca Padronizada */}
+        {/* Busca */}
         <div className="relative max-w-lg mb-10 group">
           <input
             type="text"
@@ -179,14 +236,14 @@ export default function GerenciaPedidos() {
                 </div>
               </div>
 
-              {/* Botão de Ação - Inversão de Cores Premium */}
+              {/* Botão de Ação */}
               <Link href="/meuspedidos">
                 <button className="w-full bg-theme-text-title hover:opacity-90 text-theme-base font-black py-4 rounded-2xl transition-all flex items-center justify-center gap-2 text-xs uppercase tracking-[2px] shadow-lg relative z-10 active:scale-[0.98]">
                   Ver Pedidos da Loja
                 </button>
               </Link>
 
-              {/* Detalhe de fundo sutil */}
+              {/* Detalhe de fundo decorativo */}
               <div className="absolute top-0 right-0 -mr-16 -mt-16 w-48 h-48 bg-blue-600/5 rounded-full blur-3xl group-hover:bg-blue-600/10 transition-colors"></div>
             </div>
           ))}
