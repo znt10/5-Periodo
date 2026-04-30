@@ -10,6 +10,8 @@ from .models import Pedido
 from django.contrib.auth import get_user_model
 from reportlab.lib import colors
 from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
+from django.utils.decorators import method_decorator
+from django.views.decorators.csrf import csrf_exempt
 User = get_user_model()
 from reportlab.lib.pagesizes import A4
 from django.utils import timezone
@@ -176,9 +178,22 @@ class LoginView(APIView):
 
 
 class LogoutView(APIView):
+    # O IsAuthenticated pode falhar se o CSRF não for enviado junto com o cookie
+    # Para rotas de Logout, é comum simplificar a permissão ou isentar o CSRF
     permission_classes = [IsAuthenticated]
+
+    @method_decorator(csrf_exempt)
     def post(self, request):
-        response = Response({"message": "Logout realizado"})
-        response.delete_cookie('access_token')
-        response.delete_cookie("refresh_token") 
+        response = Response({"message": "Logout realizado com sucesso"})
+        
+        # Deletar os cookies garantindo o path correto
+        # Se você usa HTTPS em produção, adicione secure=True
+        cookie_params = {
+            'path': '/',
+            'samesite': 'Lax', # Ou 'None' se estiver em domínios diferentes
+        }
+        
+        response.delete_cookie('access_token', **cookie_params)
+        response.delete_cookie('refresh_token', **cookie_params)
+        
         return response

@@ -52,9 +52,13 @@ class EstoqueViewSet(viewsets.ModelViewSet):
 
 # 🔹 PRODUTO
 class ProdutoViewSet(viewsets.ModelViewSet):
-    queryset = Produto.objects.all()
+    queryset = Produto.objects.all().order_by('nome_produto')
     serializer_class = ProdutoSerializer
-    permission_classes = [IsAuthenticated,IsGerenteOrAdministrador]
+
+    def get_permissions(self):
+        if self.action == 'list':
+            return [AllowAny()]
+        return [IsAuthenticated(), IsGerenteOrAdministrador()]
 
 
 # 🔹 ITEM PEDIDO 
@@ -104,7 +108,7 @@ class UsuarioViewSet(UserOuAdminMixin, viewsets.ModelViewSet):
                 "group": group,
                 "loja": {
                     "id": loja_vinculada.id,
-                    "nome": loja_vinculada.nome
+                    "nome": loja_vinculada.nome_loja
                 } if loja_vinculada else None
             })
     

@@ -41,10 +41,14 @@ export default function LoginPage() {
 
     try {
       await login(email, password);
+
       const currentUser = await getCurrentUser();
+
       setUser(currentUser);
+
       router.push("/dashboard");
     } catch (err: any) {
+      console.error(err);
       setError(err.message);
     } finally {
       setLoading(false);

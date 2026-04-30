@@ -1,36 +1,55 @@
 import { apiFetch, apiV1 } from './api';
 
+// 🔹 LOGIN
 export const login = async (email: string, password: string) => {
-  return apiFetch('/login/', {
+  return await apiFetch('/login/', {
     method: 'POST',
     body: JSON.stringify({
-      email: email,
+      email,
       password,
     }),
   });
 };
+
+// 🔹 USUÁRIO ATUAL
 export const getCurrentUser = async () => {
-  return apiV1('/user/me/', {
+  return await apiV1('/user/me/', {
     method: 'GET',
   });
-}
-
-
-export const logout = async () => {
-  return apiFetch('/logout/', {
-    method: 'POST',
-  });
 };
- 
-export const register = async (
 
+// 🔹 LOGOUT
+export const logout = async () => {
+  try {
+    const response = await apiFetch('/logout/', {
+      method: 'POST',
+      // CRITICAL: Garante que os cookies HttpOnly sejam enviados na requisição
+      credentials: 'include', 
+    });
+
+    if (response) {
+      // Limpe o estado global do seu app (ex: Zustand, Redux ou Context)
+      // useAuthStore.getState().logout(); 
+      
+      // Opcional: Redirecionar para login
+      window.location.href = '/';
+    }
+
+    return response;
+  } catch (error) {
+    console.error("Erro ao fazer logout:", error);
+    throw error;
+  }
+};
+// 🔹 REGISTER
+export const register = async (
   first_name: string,
   email: string,
   password: string,
   tipo_usuario: string,
   id_loja?: number | string
 ) => {
-    return apiV1('/user/registrar/', {
+  return await apiV1('/user/registrar/', {
     method: 'POST',
     body: JSON.stringify({
       first_name,
@@ -42,17 +61,51 @@ export const register = async (
   });
 };
 
-
-export const getRelatorio = async () => {
-  // Usamos o fetch nativo para evitar as travas do seu apiFetch customizado
-  const response = await fetch("http://127.0.0.1:8000/gerar_pdf/", {
+// 🔹 LOJAS
+export const getLoja = async () => {
+  return await apiV1('/lojas/', {
     method: 'GET',
   });
+};
 
-  if (!response.ok) {
-    throw new Error(`Erro no servidor: ${response.status}`);
+// 🔹 PRODUTOS
+
+export const getProdutos = async () => {
+  return await apiV1('/produtos/', {
+    method: 'GET',
+  });
+};
+
+// 🔹 TIPOS
+export type ItemPedido = {
+  produto: number;
+  quantidade: number;
+};
+
+export type PedidoData = {
+  loja: number;
+  descricao: string;
+  itens: ItemPedido[];
+};
+
+// 🔹 PEDIDO
+export const postPedido = async (pedidoData: PedidoData) => {
+  return await apiV1('/pedidos/', {
+    method: 'POST',
+    body: JSON.stringify(pedidoData),
+  });
+};
+
+// 🔹 RELATÓRIO (PDF)
+export const getRelatorio = async () => {
+  const res = await fetch(`http://localhost:8000/gerar_pdf/`, {
+    method: 'GET',
+    credentials: 'include', // 🔥 necessário pro cookie
+  });
+
+  if (!res.ok) {
+    throw new Error('Erro ao gerar PDF');
   }
 
-  // Aqui está o pulo do gato: pegamos como blob (binário)
-  return await response.blob(); 
+  return await res.blob();
 };
